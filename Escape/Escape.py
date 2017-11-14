@@ -1,4 +1,4 @@
-#Version 4.0.2
+#Version 4.0.3
 #Escape by TyReesh Boedhram
 #NOTE: This game must be run in Command Prompt on Windows or Terminal in Linux to work properly.
 #This game will not work properly on Sololearn or in IDLE.
