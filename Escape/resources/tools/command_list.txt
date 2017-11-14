@@ -1,0 +1,7 @@
+Command list
+-------------------------------------------
+|edtsv.py				  |
+|~exit	-  Exit editor			  |
+|~edit	-  Edit a variable in save data	  |
+|~save	-  Saves changes back to save file|
+-------------------------------------------

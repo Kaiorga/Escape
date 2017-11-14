@@ -1,0 +1,81 @@
+Change Log for Escape
+
+v 1.0.0
+- Game is in orginal working condition to Calculator counterpart
+
+v 2.0.0
+- Added Settings menu
+	- Added ability to change height
+	- Added ablilty to change length
+	- Added ability to change text and background color (Windows Only)
+	- Added support for Linux systems
+- Optimized parts of the code
+
+v 3.0.0
+- Code optimization
+	- Compressed print commands to one line when able.
+- Added variables for highscore system
+- Minor text fixes
+
+v 3.1.0
+- Added minimum height and lenght
+- Added small height and length warnings
+
+v 3.2.0
+- Added "Highscore" to main menu
+- Added resources folder
+- Added resources/saves folder
+- Changed save directory to resources/saves
+- Code Optimization
+	- Added clear function to replace old clearing "method"
+
+v 3.3.0
+- Added resources/tests folder
+- Added edtsv.py to tests folder
+- Added command list.txt to tests folder
+- Renamed resources/saves to resources/data
+
+v 3.4.0
+- Added highscore_setup.py
+	- Created default highscore.pickle
+- Added highscore function
+- Activated "Highscore" menu option
+	- (Note: Highscore system is still not complete)
+- Renamed resources/tests to resources/tools
+
+v 3.5.0
+- Updated edtsv.py
+	- Updated for better error handling
+	- Switched 1/0 variables to boolean variables
+- Updated 1/0 varables to boolean variables (Game Code)
+- Updated some variable names
+
+v 3.6.0
+- Finished highscore system
+	- Auto updates upon game over
+
+v 4.0.0
+- Updated to use classes
+	- All game objects now use Game_Object class
+- Added two loops
+	- Loop added for AI movement
+	- Loop added for end game check conditions
+- Updated variable names
+
+v 4.0.1
+- Updated edtsv.py
+	- Updated for compatablility with new class structure and variable names
+
+v 4.0.2
+- xval and yval became Object gridSize of class Game_Object
+	- Updated edtsv.py to reflect changes
+- Players initial y cordinate is now randomized
+- Loop added for lifeOrb check in new_round()
+
+v 4.0.3
+- added config.pickle
+	- saves the user set gridSize and color
+- color now uses the Game_Object class
+	- done for easier saving
+	- NOTE: background color is .x and forground color is .y
+
