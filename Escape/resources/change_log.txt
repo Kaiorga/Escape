@@ -74,8 +74,14 @@ v 4.0.2
 
 v 4.0.3
 - added config.pickle
-	- saves the user set gridSize and color
-- color now uses the Game_Object class
+	- saves the user set gridSize and cmd color
+- cmd color now uses the Game_Object class
 	- done for easier saving
 	- NOTE: background color is .x and forground color is .y
 
+v 4.0.4
+- Added config.py to resources/tools
+	- Used to generate default config file
+- Color no longer reverts to defualt but instead to the last vaild combination found in config.pickle
+- Changed highscore_setup.py to highscore.py
+- Minor text changes to Escape.py

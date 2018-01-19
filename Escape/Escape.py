@@ -256,7 +256,7 @@ def Settings():
                     print('WARNING: This grid size might not be playable')
                     input()
                 if ynew < 5:
-                    print('Entered value is to small. Height set to 10')
+                    print('Entered value is to small. Height set to 8')
                     ynew = 8
                     input()
             gridSize.y = ynew + 2
@@ -264,16 +264,20 @@ def Settings():
             print('Pick a new color\nColors\n0 = Black       8 = Gray\n1 = Blue        9 = Light Blue\n2 = Green       A = Light Green\n3 = Aqua        B = Light Aqua\n4 = Red         C = Light Red\n5 = Purple      D = Light Purple\n6 = Yellow      E = Light Yellow\n7 = White       F = Bright White\nEntering anything other than one of the colors listed will set colors to default')
             color_list = ['1','2','3','4','5','6','7','8','9','0','a','b','c','d','e','f','A','B','C','D','E','F']
             print('Background Color')
-            color.x = input()
-            if color.x not in color_list:
-                color.x = '0'
+            background = input()
+            if background not in color_list:
+                background = color.x
             print('Text Color')
-            color.y = input()
-            if color.y not in color_list:
-                color.y = '7'
-            if color.x == color.y:
-                color.x = '0'
-                color.y = '7'
+            foreground = input()
+            if foreground not in color_list:
+                foreground = color.y
+            if background == foreground:
+                print('ERROR: Background and text color cannot be the same.\nRestoring from config file.\nPress ENTER to continue.')
+                input()
+                background = color.x
+                foreground = color.y
+            color.x = background
+            color.y = foreground
             os.system('color ' + color.x + color.y)
         if o == '3' and op_sys != 'Windows':
             settings = False
