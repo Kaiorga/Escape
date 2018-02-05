@@ -9,7 +9,7 @@ import platform
 os.system('title Edit Save')
 op_sys = platform.system()
 
-class Game_Object:
+class GameObject:
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -28,7 +28,7 @@ if save == '':
 
 try:
     with open(save, 'rb') as f:
-        gridSize, score, lifeCount, lifeOrb, player, guards, guard1, guard2, guard3, guard4, door = pickle.load(f)
+        grid_size, score, life_count, life_orb, player, guards, guard1, guard2, guard3, guard4, door = pickle.load(f)
     a = True
 
 except FileNotFoundError:
@@ -49,17 +49,17 @@ except ValueError:
 while a == True:
     clear()
     print('Current save data\n             .x , .y')
-    print('gridSize    ',gridSize.x,',',gridSize.y,'\nplayer      ',player.x,',',player.y,'\nguard1      ',guard1.x,',',guard1.y,'\nguard2      ',guard2.x,',',guard2.y,'\nguard3      ',guard3.x,',',guard3.y,'\nguard4      ',guard4.x,',',guard4.y,'\nlifeOrb     ',lifeOrb.x,',',lifeOrb.y,'\nscore       ',score,'\nlifeCount   ',lifeCount,'\ndoor        ',door)
+    print('grid_size    ',grid_size.x,',',grid_size.y,'\nplayer      ',player.x,',',player.y,'\nguard1      ',guard1.x,',',guard1.y,'\nguard2      ',guard2.x,',',guard2.y,'\nguard3      ',guard3.x,',',guard3.y,'\nguard4      ',guard4.x,',',guard4.y,'\nlife_orb     ',life_orb.x,',',life_orb.y,'\nscore       ',score,'\nlife_count   ',life_count,'\ndoor        ',door)
     b = input()
     if b == '~exit':
         a = False
     if b == '~save':
         with open(save, 'wb') as f:
-            pickle.dump([gridSize, score, lifeCount, lifeOrb, player, guards, guard1, guard2, guard3, guard4, door], f)
+            pickle.dump([grid_size, score, life_count, life_orb, player, guards, guard1, guard2, guard3, guard4, door], f)
     if b == '~edit':
         print('Choose Variable')
         c = input()
-        variables = ['xval','yval','score','lifeCount','lifeOrb.x','lifeOrb.y','player.x','player.y','guard1.x','guard1.y','guard2.x','guard2.y','guard3.x','guard3.y','guard4.x','guard4.y','door']
+        variables = ['xval','yval','score','life_count','life_orb.x','life_orb.y','player.x','player.y','guard1.x','guard1.y','guard2.x','guard2.y','guard3.x','guard3.y','guard4.x','guard4.y','door']
         if c in variables:
             print('Enter new value')
             try:

@@ -1,4 +1,4 @@
-#Version 4.0.3
+#Version 5.0.0
 #Escape by TyReesh Boedhram
 #NOTE: This game must be run in Command Prompt on Windows or Terminal in Linux to work properly.
 #This game will not work properly on Sololearn or in IDLE.
@@ -9,15 +9,16 @@ import os
 import pickle
 import random
 import platform
+import resources.tools.config as config
 
 os.system('title Escape')
 op_sys = platform.system()
 
-class Game_Object:
+class GameObject:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        #color uses the Game_Object class
+        #color uses the GameObject class
         #background color = x and forground color = y
 
 def clear():
@@ -30,100 +31,100 @@ def clear():
 def grid():
     global matrix, li
     clear()
-    matrix = [[ ' ' for x in range(gridSize.x)] for y in range(gridSize.y)]
+    matrix = [[ ' ' for x in range(grid_size.x)] for y in range(grid_size.y)]
     for sublist in matrix:
-        #--top and bottom border--
+        #--top and bottdom border--
         g = 0
-        while g < gridSize.x:
+        while g < grid_size.x:
             matrix[0][g] = '-'
-            matrix[gridSize.y-1][g] = '-'
+            matrix[grid_size.y-1][g] = '-'
             g += 1
         #--game objects--
-        matrix[door][gridSize.x-1] = '}'
+        matrix[door][grid_size.x-1] = '}'
         matrix[player.y][player.x] = 'i'
         matrix[guard1.y][guard1.x] = '#'
         matrix[guard2.y][guard2.x] = '#'
         matrix[guard3.y][guard3.x] = '#'
         matrix[guard4.y][guard4.x] = '#'
         if li == True:
-            matrix[lifeOrb.y][lifeOrb.x] = '*'
+            matrix[life_orb.y][life_orb.x] = '*'
         else:
-            matrix[lifeOrb.y][lifeOrb.x] = '-'
+            matrix[life_orb.y][life_orb.x] = '-'
         #--removes extra characters--
         s = str(sublist)
         s = s.replace('[', '|').replace(']', '|').replace(',','').replace('\'','')
         print (s)
-    print ('Score:',score,'Lives:',lifeCount)
+    print ('Score:',score,'Lives:',life_count)
     return
 
 #--Player Commands--
-def Player():
+def player_input():
     global player
     Y = input()
     if Y == 'w' and player.y > 1:
         player.y -= 1
     if Y == 'a' and player.x > 0:
         player.x -= 1
-    if Y == 's' and player.y < gridSize.y-2:
+    if Y == 's' and player.y < grid_size.y-2:
         player.y += 1
-    if Y == 'd' and player.x < gridSize.x-1:
+    if Y == 'd' and player.x < grid_size.x-1:
         player.x += 1
-        if player.y != door and player.x == gridSize.x-1:
+        if player.y != door and player.x == grid_size.x-1:
             player.x -= 1
     if Y == 'e':
         pause()
     return
 
 #--Guard Movement AI--
-def AI():
+def ai():
     global guards, guard1, guard2, guard3, guard4
     for guard in guards:
         direction = random.randint(1,4)
         if direction == 1 and guard.y > 1:
             guard.y -= 1
-        if direction == 2 and guard.x < gridSize.x-2:
+        if direction == 2 and guard.x < grid_size.x-2:
             guard.x += 1
-        if direction == 3 and guard.y < gridSize.y-2:
+        if direction == 3 and guard.y < grid_size.y-2:
             guard.y += 1
         if direction == 4 and guard.x > 0:
             guard.x -= 1
 
 def new_round():
-    global door, player, guards, guard1, guard2, guard3, guard4, lifeOrb, li
-    door = random.randint(1,gridSize.y-2)
-    player = Game_Object(0,random.randint(1,gridSize.y-2))
-    guard1 = Game_Object(random.randint(2,gridSize.x-2),random.randint(1,gridSize.y-2))
-    guard2 = Game_Object(random.randint(2,gridSize.x-2),random.randint(1,gridSize.y-2))
-    guard3 = Game_Object(random.randint(2,gridSize.x-2),random.randint(1,gridSize.y-2))
-    guard4 = Game_Object(random.randint(2,gridSize.x-2),random.randint(1,gridSize.y-2))
+    global door, player, guards, guard1, guard2, guard3, guard4, life_orb, li
+    door = random.randint(1,grid_size.y-2)
+    player = GameObject(0,random.randint(1,grid_size.y-2))
+    guard1 = GameObject(random.randint(2,grid_size.x-2),random.randint(1,grid_size.y-2))
+    guard2 = GameObject(random.randint(2,grid_size.x-2),random.randint(1,grid_size.y-2))
+    guard3 = GameObject(random.randint(2,grid_size.x-2),random.randint(1,grid_size.y-2))
+    guard4 = GameObject(random.randint(2,grid_size.x-2),random.randint(1,grid_size.y-2))
     guards = [guard1, guard2, guard3, guard4]
-    lifeOrb = Game_Object(random.randint(2,gridSize.x-2),random.randint(1,gridSize.y-2))
+    life_orb = GameObject(random.randint(2,grid_size.x-2),random.randint(1,grid_size.y-2))
     for guard in guards:
-        if lifeOrb.y == guard.y and lifeOrb.x == guard.x:
-            lifeOrb = Game_Object(random.randint(2,gridSize.x-2),random.randint(1,gridSize.y-2))
+        if life_orb.y == guard.y and life_orb.x == guard.x:
+            life_orb = GameObject(random.randint(2,grid_size.x-2),random.randint(1,grid_size.y-2))
     li = True
     grid()
     return
 
 def life():
-    global lifeCount
-    lifeCount += 1
-    if lifeCount > 10:
-        lifeCount = 10
+    global life_count
+    life_count += 1
+    if life_count > 10:
+        life_count = 10
     return
 
 def life_2():
-    global lifeOrb, li
-    lifeOrb.y = gridSize.y-1
-    lifeOrb.x = gridSize.x-1
+    global life_orb, li
+    life_orb.y = grid_size.y-1
+    life_orb.x = grid_size.x-1
     li = False
     grid()
     return
 
 def end_round():
-    global lifeCount
-    lifeCount -= 1
-    if lifeCount == 0:
+    global life_count
+    life_count -= 1
+    if life_count == 0:
         end_game()
     else:
         new_round()
@@ -134,59 +135,15 @@ def end_game():
     if sv == True:
         os.remove('resources/data/svdta.pickle')
     clear()
-    update_highscore()
+    highscore.update(score)
     print('Game Over\nScore =',score,'\nPress "H" to view highscores')
     a = input()
     if a == 'H' or a == 'h':
-        highscore()
-    else:
-        pass
+        highscore.display()
     game = False
     menu = True
     return
-
-def highscore():
-    with open('resources/data/highscore.pickle', 'rb') as g:
-        hscore1, hscore2, hscore3, hscore4, hscore5, hscore6 = pickle.load(g)
-    print('Highscore\n','\n1:',hscore1,'\n2:',hscore2,'\n3:',hscore3,'\n4:',hscore4,'\n5:',hscore5,'\n6:',hscore6)
-    input()
-    return
-
-def update_highscore():
-    with open('resources/data/highscore.pickle', 'rb') as g:
-        hscore1, hscore2, hscore3, hscore4, hscore5, hscore6 = pickle.load(g)
-    if score > hscore1:
-        hscore6 = hscore5
-        hscore5 = hscore4
-        hscore4 = hscore3
-        hscore3 = hscore2
-        hscore2 = hscore1
-        hscore1 = score
-    elif score > hscore2:
-        hscore6 = hscore5
-        hscore5 = hscore4
-        hscore4 = hscore3
-        hscore3 = hscore2
-        hscore2 = score
-    elif score > hscore3:
-        hscore6 = hscore5
-        hscore5 = hscore4
-        hscore4 = hscore3
-        hscore3 = score
-    elif score > hscore4:
-        hscore6 = hscore5
-        hscore5 = hscore4
-        hscore4 = score
-    elif score > hscore5:
-        hscore6 = hscore5
-        hscore5 = score
-    elif score > hscore6:
-        hscore6 = score
-    else:
-        pass
-    with open('resources/data/highscore.pickle', 'wb') as g:
-        pickle.dump([hscore1, hscore2, hscore3, hscore4, hscore5, hscore6], g)
-        
+       
 def pause():
     global game, menu
     pause = True
@@ -202,7 +159,7 @@ def pause():
             s = input()
             if s == '1':
                 with open('resources/data/svdta.pickle', 'wb') as f:
-                    pickle.dump([gridSize, score, lifeCount, lifeOrb, player, guards, guard1, guard2, guard3, guard4, door], f)
+                    pickle.dump([grid_size, score, life_count, life_orb, player, guards, guard1, guard2, guard3, guard4, door], f)
                 clear()
                 print('Save Complete')
                 input()
@@ -217,8 +174,8 @@ def pause():
     grid()
     return
 
-def Settings():
-    global gridSize
+def settings():
+    global grid_size
     settings = True
     while settings == True:
         clear()
@@ -230,11 +187,11 @@ def Settings():
         o = input()
         clear()
         if o == '1':
-            print('Enter a new length\nCurrent length', gridSize.x)
+            print('Enter a new length\nCurrent length', grid_size.x)
             try:
                 xnew = int(input())
             except ValueError:
-                xnew = gridSize.x
+                xnew = grid_size.x
             if xnew < 10:
                 if xnew > 4:
                     print('WARNING: This grid size might not be playable')
@@ -243,14 +200,14 @@ def Settings():
                     print('Entered value is to small. Length set to 10')
                     xnew = 10
                     input()
-            gridSize.x = xnew
+            grid_size.x = xnew
         if o == '2':
-            gridSize.y -= 2
-            print('Enter a new height\nCurrent height', gridSize.y)
+            grid_size.y -= 2
+            print('Enter a new height\nCurrent height', grid_size.y)
             try:
                 ynew = int(input())
             except ValueError:
-                ynew = gridSize.y
+                ynew = grid_size.y
             if ynew < 8:
                 if ynew > 4:
                     print('WARNING: This grid size might not be playable')
@@ -259,7 +216,7 @@ def Settings():
                     print('Entered value is to small. Height set to 8')
                     ynew = 8
                     input()
-            gridSize.y = ynew + 2
+            grid_size.y = ynew + 2
         if o == '3' and op_sys == 'Windows':
             print('Pick a new color\nColors\n0 = Black       8 = Gray\n1 = Blue        9 = Light Blue\n2 = Green       A = Light Green\n3 = Aqua        B = Light Aqua\n4 = Red         C = Light Red\n5 = Purple      D = Light Purple\n6 = Yellow      E = Light Yellow\n7 = White       F = Bright White\nEntering anything other than one of the colors listed will set colors to default')
             color_list = ['1','2','3','4','5','6','7','8','9','0','a','b','c','d','e','f','A','B','C','D','E','F']
@@ -283,13 +240,13 @@ def Settings():
             settings = False
         if o == '4' and op_sys == 'Windows':
             settings = False
-    with open('resources/data/config.pickle', 'wb') as config:
-                    pickle.dump([gridSize, color], config)
+    with open('resources/data/config.pickle', 'wb') as config_file:
+                    pickle.dump([grid_size, color], config_file)
     return
 
 #--master loop--
-with open('resources/data/config.pickle', 'rb') as config:
-    gridSize, color = pickle.load(config)
+with open('resources/data/config.pickle', 'rb') as config_file:
+    grid_size, color = pickle.load(config_file)
 os.system('color ' + color.x + color.y)
 master = True
 menu = True
@@ -305,14 +262,14 @@ while master == True:
             menu = False
             game = True
             sv = False
-            lifeCount = 1
+            life_count = 1
             score = 0
             new_round()
         if m == '2':
             loaderror = False
             try:
                 with open('resources/data/svdta.pickle', 'rb') as svdta:
-                    gridSize, score, lifeCount, lifeOrb, player, guards, guard1, guard2, guard3, guard4, door = pickle.load(svdta)
+                    grid_size, score, life_count, life_orb, player, guards, guard1, guard2, guard3, guard4, door = pickle.load(svdta)
                 menu = False
                 game = True
                 li = True
@@ -322,12 +279,12 @@ while master == True:
                 print('No save data found')
                 input()
         if m == '3':
-            highscore()
+            highscore.display()
         if m == '4':
             print('Instructions\n\nGet your person (i) to the exit (})\nwithout getting caught by the guards (#).\n(*) will give you +1 life.\nUse the \'w\',\'a\',\'s\',\'d\' keys to move your character.\nUse the \'e\' key to open the pause menu.')
             input()
         if m == '5':
-            Settings()
+            settings()
         if m == '6':
             master = False
             menu = False
@@ -336,18 +293,18 @@ while master == True:
     #--game loop--
     while game == True:
         n = True
-        Player()
+        player_input()
         if n == True:
-            AI()
+            ai()
             grid()
-        if player.y == door and player.x == gridSize.x-1:
+        if player.y == door and player.x == grid_size.x-1:
             score += 1
             new_round()
-        if player.y == lifeOrb.y and player.x == lifeOrb.x:
+        if player.y == life_orb.y and player.x == life_orb.x:
             life()
             life_2()
         for guard in guards:
-            if lifeOrb.y == guard.y and lifeOrb.x == guard.x:
+            if life_orb.y == guard.y and life_orb.x == guard.x:
                 life_2()
             if player.y == guard.y and player.x == guard.x:
                 end_round()

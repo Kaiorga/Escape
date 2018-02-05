@@ -85,3 +85,11 @@ v 4.0.4
 - Color no longer reverts to defualt but instead to the last vaild combination found in config.pickle
 - Changed highscore_setup.py to highscore.py
 - Minor text changes to Escape.py
+
+v 4.0.5
+- Renamed variables, functions, classes, etc. to follow PEP rules
+- Renamed player 'function' to player_input to avoid conflict wiht player 'object'.
+
+v 5.0.0
+- took code out of escape.py and moved it to apropreate py files in tools folder
+	- highscore() and update_highscore() have been moved to highscore.py and named display() and update()
