@@ -1,4 +1,4 @@
-#Version 5.0.0
+#Version 5.1.0
 #Escape by TyReesh Boedhram
 #NOTE: This game must be run in Command Prompt on Windows or Terminal in Linux to work properly.
 #This game will not work properly on Sololearn or in IDLE.
@@ -143,9 +143,21 @@ def end_game():
     game = False
     menu = True
     return
+
+def save():
+    global save_location
+    try:
+        with open(save_location, 'wb') as f:
+            pickle.dump([grid_size, score, life_count, life_orb, player, guards, guard1, guard2, guard3, guard4, door], f)                
+        clear()
+        print('Save Complete')
+        input()
+    except OSError:
+        print('Error: Save Failed\nInvalid file name entered')
+        input()
        
 def pause():
-    global game, menu
+    global game, menu, save_location
     pause = True
     while pause == True:
         clear()
@@ -155,16 +167,20 @@ def pause():
             pause = False
         if n == '2':
             clear()
-            print('WARNING: Saving will overwrite the last save game\nWould you still like to save the game?\n1: Yes\n2. No')
-            s = input()
-            if s == '1':
-                with open('resources/data/svdta.pickle', 'wb') as f:
-                    pickle.dump([grid_size, score, life_count, life_orb, player, guards, guard1, guard2, guard3, guard4, door], f)
-                clear()
-                print('Save Complete')
-                input()
-            if s == '2':
-                pass
+            print('Name this save file')
+            save_location = 'resources/save_data/' + input() + '.pickle'
+            if save_location == 'resources/save_data/.pickle':
+                save_location = 'resources/save_data/svdta.pickle'
+            clear()
+            if os.path.isfile(save_location):
+                print('WARNING: Saving will overwrite the last save game\nWould you still like to save the game?\n1: Yes\n2. No')
+                s = input()
+                if s == '1':
+                    save()
+                if s == '2':
+                    pass
+            else:
+                save()   
         if n == '3':
             pause = False
             menu = True
@@ -266,9 +282,12 @@ while master == True:
             score = 0
             new_round()
         if m == '2':
-            loaderror = False
+            print('Type in the name of the save file.')
+            save_location = 'resources/save_data/' + input() + '.pickle'
+            if save_location == 'resources/save_data/.pickle':
+                save_location = 'resources/save_data/svdta.pickle'
             try:
-                with open('resources/data/svdta.pickle', 'rb') as svdta:
+                with open(save_location, 'rb') as svdta:
                     grid_size, score, life_count, life_orb, player, guards, guard1, guard2, guard3, guard4, door = pickle.load(svdta)
                 menu = False
                 game = True
@@ -278,6 +297,10 @@ while master == True:
             except FileNotFoundError:
                 print('No save data found')
                 input()
+            except OSError:
+                print('Error: Save Failed\nInvalid file name entered')
+                input()
+                
         if m == '3':
             highscore.display()
         if m == '4':

@@ -73,7 +73,7 @@ v 4.0.2
 - Loop added for lifeOrb check in new_round()
 
 v 4.0.3
-- added config.pickle
+- Added config.pickle
 	- saves the user set gridSize and cmd color
 - cmd color now uses the Game_Object class
 	- done for easier saving
@@ -91,5 +91,13 @@ v 4.0.5
 - Renamed player 'function' to player_input to avoid conflict wiht player 'object'.
 
 v 5.0.0
-- took code out of escape.py and moved it to apropreate py files in tools folder
+- Took code out of escape.py and moved it to apropreate py files in tools folder
 	- highscore() and update_highscore() have been moved to highscore.py and named display() and update()
+
+v 5.1.0
+- Removed unsued variable loaderror
+- Added the ability to name save files when saving
+- Save warning now only appears if trying to use and existing name
+- Saves are now in the save_data folder
+- Added the ability to load different save files
+- Added error exeption for invaild file names
