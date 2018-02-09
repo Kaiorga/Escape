@@ -101,3 +101,11 @@ v 5.1.0
 - Saves are now in the save_data folder
 - Added the ability to load different save files
 - Added error exeption for invaild file names
+
+v 5.1.1
+- Minor diaologue changes
+- Upon game over, the loaded save will be deleated
+	- Before the default save was deleated if a save was loaded
+	- This does not affect New games that are never saved
+- Removed config import as it was unused
+- Readded highscore import

@@ -1,4 +1,4 @@
-#Version 5.1.0
+#Version 5.1.1
 #Escape by TyReesh Boedhram
 #NOTE: This game must be run in Command Prompt on Windows or Terminal in Linux to work properly.
 #This game will not work properly on Sololearn or in IDLE.
@@ -9,7 +9,7 @@ import os
 import pickle
 import random
 import platform
-import resources.tools.config as config
+import resources.tools.highscore as highscore 
 
 os.system('title Escape')
 op_sys = platform.system()
@@ -131,9 +131,9 @@ def end_round():
     return
 
 def end_game():
-    global game, menu, sv
+    global game, menu, sv, save_location
     if sv == True:
-        os.remove('resources/data/svdta.pickle')
+        os.remove(save_location)
     clear()
     highscore.update(score)
     print('Game Over\nScore =',score,'\nPress "H" to view highscores')
@@ -145,13 +145,14 @@ def end_game():
     return
 
 def save():
-    global save_location
+    global save_location, sv
     try:
         with open(save_location, 'wb') as f:
             pickle.dump([grid_size, score, life_count, life_orb, player, guards, guard1, guard2, guard3, guard4, door], f)                
         clear()
         print('Save Complete')
         input()
+        sv = True
     except OSError:
         print('Error: Save Failed\nInvalid file name entered')
         input()
@@ -167,13 +168,13 @@ def pause():
             pause = False
         if n == '2':
             clear()
-            print('Name this save file')
+            print('Name this save file\nPress ENTER to use defualt name')
             save_location = 'resources/save_data/' + input() + '.pickle'
             if save_location == 'resources/save_data/.pickle':
                 save_location = 'resources/save_data/svdta.pickle'
             clear()
             if os.path.isfile(save_location):
-                print('WARNING: Saving will overwrite the last save game\nWould you still like to save the game?\n1: Yes\n2. No')
+                print('WARNING: A save file with that name already exists\nSaving will overwrite the last save game\nWould you still like to save the game?\n1: Yes\n2. No')
                 s = input()
                 if s == '1':
                     save()
@@ -282,7 +283,7 @@ while master == True:
             score = 0
             new_round()
         if m == '2':
-            print('Type in the name of the save file.')
+            print('Type in the name of the save file.\nPress ENTER to use the defualt save file')
             save_location = 'resources/save_data/' + input() + '.pickle'
             if save_location == 'resources/save_data/.pickle':
                 save_location = 'resources/save_data/svdta.pickle'
@@ -298,7 +299,7 @@ while master == True:
                 print('No save data found')
                 input()
             except OSError:
-                print('Error: Save Failed\nInvalid file name entered')
+                print('Error: Load Failed\nInvalid file name entered')
                 input()
                 
         if m == '3':
