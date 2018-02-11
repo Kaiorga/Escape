@@ -24,19 +24,14 @@ def clear():
 print('Open Save File\nPress ENTER to open default location')
 save = input()
 if save == '':
-    save = '../data/svdta.pickle'
+    save = '../save_data/svdta.pickle'
 
 try:
     with open(save, 'rb') as f:
-        grid_size, score, life_count, life_orb, player, guards, guard1, guard2, guard3, guard4, door = pickle.load(f)
+        grid_size, score, life_count, life_orb, li, player, guards, guard1, guard2, guard3, guard4, door = pickle.load(f)
     a = True
 
-except FileNotFoundError:
-    print('ERROR: No save data found.\nPress ENTER to continue.')
-    input()
-    a = False
-
-except PermissionError:
+except FileNotFoundError, PermissionError:
     print('ERROR: No save data found.\nPress ENTER to continue.')
     input()
     a = False
@@ -55,11 +50,11 @@ while a == True:
         a = False
     if b == '~save':
         with open(save, 'wb') as f:
-            pickle.dump([grid_size, score, life_count, life_orb, player, guards, guard1, guard2, guard3, guard4, door], f)
+            pickle.dump([grid_size, score, life_count, life_orb, li, player, guards, guard1, guard2, guard3, guard4, door], f)
     if b == '~edit':
         print('Choose Variable')
         c = input()
-        variables = ['xval','yval','score','life_count','life_orb.x','life_orb.y','player.x','player.y','guard1.x','guard1.y','guard2.x','guard2.y','guard3.x','guard3.y','guard4.x','guard4.y','door']
+        variables = ['xval','yval','score','life_count','life_orb.x','life_orb.y','player.x','player.y','li','guard1.x','guard1.y','guard2.x','guard2.y','guard3.x','guard3.y','guard4.x','guard4.y','door']
         if c in variables:
             print('Enter new value')
             try:

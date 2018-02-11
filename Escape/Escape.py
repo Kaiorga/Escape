@@ -1,4 +1,4 @@
-#Version 5.1.2
+#Version 5.1.3
 #Escape by TyReesh Boedhram
 #NOTE: This game must be run in Command Prompt on Windows or Terminal in Linux to work properly.
 #This game will not work properly on Sololearn or in IDLE.
@@ -103,7 +103,7 @@ def new_round():
         life_orb = GameObject(random.randint(grid_size.x/2,grid_size.x-2),random.randint(1,grid_size.y-2))
         for guard in guards:
             if life_orb.y == guard.y and life_orb.x == guard.x:
-                life_orb = GameObject(random.randint(2,grid_size.x-2),random.randint(1,grid_size.y-2))
+                life_orb = GameObject(random.randint(grid_size.x/2,grid_size.x-2),random.randint(1,grid_size.y-2))
     else:
         li = False
         life_orb = GameObject(grid_size.x-1,grid_size.y-1)
@@ -142,6 +142,7 @@ def end_game():
     highscore.update(score)
     print('Game Over\nScore =',score,'\nPress "H" to view highscores')
     a = input()
+    clear()
     if a == 'H' or a == 'h':
         highscore.display()
     game = False
@@ -152,7 +153,7 @@ def save():
     global save_location, sv
     try:
         with open(save_location, 'wb') as f:
-            pickle.dump([grid_size, score, life_count, life_orb, player, guards, guard1, guard2, guard3, guard4, door], f)                
+            pickle.dump([grid_size, score, life_count, life_orb, li, player, guards, guard1, guard2, guard3, guard4, door], f)                
         clear()
         print('Save Complete')
         input()
@@ -293,10 +294,9 @@ while master == True:
                 save_location = 'resources/save_data/svdta.pickle'
             try:
                 with open(save_location, 'rb') as svdta:
-                    grid_size, score, life_count, life_orb, player, guards, guard1, guard2, guard3, guard4, door = pickle.load(svdta)
+                    grid_size, score, life_count, life_orb, li, player, guards, guard1, guard2, guard3, guard4, door = pickle.load(svdta)
                 menu = False
                 game = True
-                li = True
                 sv = True
                 grid()
             except FileNotFoundError:
