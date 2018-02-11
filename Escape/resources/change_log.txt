@@ -109,3 +109,8 @@ v 5.1.1
 	- This does not affect New games that are never saved
 - Removed config import as it was unused
 - Readded highscore import
+
+v 5.1.2
+- Minor text fixes
+- Life orb now has a 1/5 chance of spawning per level
+- Life orb now only spawns on right half of the grid
