@@ -119,3 +119,8 @@ v 5.1.3
 - Minor graphical changes
 - li variable is now saved in the save data
 - Updated edtsv.py to work with new save data location and data
+
+v 5.1.4
+- Game will now create a config file if one cannot be found upon start
+- Updated config.py to reflect these changes
+- Updated highscore.py for future implementation of creating a highscore file if one is not found

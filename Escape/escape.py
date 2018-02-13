@@ -1,4 +1,4 @@
-#Version 5.1.3
+#Version 5.1.4
 #Escape by TyReesh Boedhram
 #NOTE: This game must be run in Command Prompt on Windows or Terminal in Linux to work properly.
 #This game will not work properly on Sololearn or in IDLE.
@@ -9,6 +9,7 @@ import os
 import pickle
 import random
 import platform
+import resources.tools.config as config
 import resources.tools.highscore as highscore 
 
 os.system('title Escape')
@@ -267,8 +268,13 @@ def settings():
     return
 
 #--master loop--
-with open('resources/data/config.pickle', 'rb') as config_file:
-    grid_size, color = pickle.load(config_file)
+try:
+    with open('resources/data/config.pickle', 'rb') as config_file:
+        grid_size, color = pickle.load(config_file)
+except FileNotFoundError:
+    config.setup('resources/data/config.pickle')
+    with open('resources/data/config.pickle', 'rb') as config_file:
+        grid_size, color = pickle.load(config_file)
 os.system('color ' + color.x + color.y)
 master = True
 menu = True
