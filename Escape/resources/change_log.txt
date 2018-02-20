@@ -1,12 +1,12 @@
 Change Log for Escape
 
 v 1.0.0
-- Game is in orginal working condition to Calculator counterpart
+- Game is in original working condition to Calculator counterpart
 
 v 2.0.0
 - Added Settings menu
 	- Added ability to change height
-	- Added ablilty to change length
+	- Added ability to change length
 	- Added ability to change text and background color (Windows Only)
 	- Added support for Linux systems
 - Optimized parts of the code
@@ -18,7 +18,7 @@ v 3.0.0
 - Minor text fixes
 
 v 3.1.0
-- Added minimum height and lenght
+- Added minimum height and length
 - Added small height and length warnings
 
 v 3.2.0
@@ -47,7 +47,7 @@ v 3.5.0
 - Updated edtsv.py
 	- Updated for better error handling
 	- Switched 1/0 variables to boolean variables
-- Updated 1/0 varables to boolean variables (Game Code)
+- Updated 1/0 variables to boolean variables (Game Code)
 - Updated some variable names
 
 v 3.6.0
@@ -64,12 +64,12 @@ v 4.0.0
 
 v 4.0.1
 - Updated edtsv.py
-	- Updated for compatablility with new class structure and variable names
+	- Updated for compatibility with new class structure and variable names
 
 v 4.0.2
 - xval and yval became Object gridSize of class Game_Object
 	- Updated edtsv.py to reflect changes
-- Players initial y cordinate is now randomized
+- Players initial y coordinates is now randomized
 - Loop added for lifeOrb check in new_round()
 
 v 4.0.3
@@ -77,38 +77,38 @@ v 4.0.3
 	- saves the user set gridSize and cmd color
 - cmd color now uses the Game_Object class
 	- done for easier saving
-	- NOTE: background color is .x and forground color is .y
+	- NOTE: background color is .x and foreground color is .y
 
 v 4.0.4
 - Added config.py to resources/tools
 	- Used to generate default config file
-- Color no longer reverts to defualt but instead to the last vaild combination found in config.pickle
+- Color no longer reverts to default but instead to the last valid combination found in config.pickle
 - Changed highscore_setup.py to highscore.py
 - Minor text changes to Escape.py
 
 v 4.0.5
 - Renamed variables, functions, classes, etc. to follow PEP rules
-- Renamed player 'function' to player_input to avoid conflict wiht player 'object'.
+- Renamed player 'function' to player_input to avoid conflict with player 'object'.
 
 v 5.0.0
-- Took code out of escape.py and moved it to apropreate py files in tools folder
+- Took code out of escape.py and moved it to appropriate py files in tools folder
 	- highscore() and update_highscore() have been moved to highscore.py and named display() and update()
 
 v 5.1.0
-- Removed unsued variable loaderror
+- Removed unused variable loaderror
 - Added the ability to name save files when saving
 - Save warning now only appears if trying to use and existing name
 - Saves are now in the save_data folder
 - Added the ability to load different save files
-- Added error exeption for invaild file names
+- Added error exception for invalid file names
 
 v 5.1.1
-- Minor diaologue changes
-- Upon game over, the loaded save will be deleated
-	- Before the default save was deleated if a save was loaded
+- Minor dialogue changes
+- Upon game over, the loaded save will be deleted
+	- Before the default save was deleted if a save was loaded
 	- This does not affect New games that are never saved
 - Removed config import as it was unused
-- Readded highscore import
+- Re-added highscore import
 
 v 5.1.2
 - Minor text fixes
@@ -128,4 +128,7 @@ v 5.1.4
 v 5.1.5
 - Game will now create a highscore file if one cannot be found upon start
 - Updated config.py to give a different message depending on how it is accessed
-- Updated highscore.py to give a differnet message dependin on how it is accessed
+- Updated highscore.py to give a different message depending on how it is accessed
+
+v 5.1.6
+- Text fixes to all files

@@ -1,16 +1,17 @@
-#This tool is used to generate the default config file
-#This tool can be used to override an existing config file
+# This tool is used to generate the default config file
+# This tool can be used to override an existing config file
 
-import os
 import pickle
+
 
 class GameObject:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        #color uses the Game_Object class
-        #background color = x and forground color = y
-  
+        # color uses the Game_Object class
+        # background color = x and foreground color = y
+
+
 def setup(location, message):
     print('Generating config.pickle ...')
     grid_size = GameObject(16, 10)
@@ -21,6 +22,7 @@ def setup(location, message):
     print('Press ENTER to ' + message)
     input()
     return
+
 
 if __name__ == '__main__':
     setup('../data/config.pickle', 'exit')
