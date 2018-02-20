@@ -132,3 +132,6 @@ v 5.1.5
 
 v 5.1.6
 - Text fixes to all files
+
+v 5.1.7
+- Fixed bug that crashed games when grid_size.x was an odd number

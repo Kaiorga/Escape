@@ -1,4 +1,4 @@
-# Version 5.1.6
+# Version 5.1.7
 # Escape by TyReesh Boedhram
 # NOTE: This game must be run in Command Prompt on Windows or Terminal in Linux to work properly.
 # This game will not work properly on Sololearn or in IDLE.
@@ -107,10 +107,10 @@ def new_round():
     guards = [guard1, guard2, guard3, guard4]
     if random.randint(1, 5) == 3:
         li = True
-        life_orb = GameObject(random.randint(grid_size.x/2, grid_size.x-2), random.randint(1, grid_size.y-2))
+        life_orb = GameObject(random.randint(round(grid_size.x/2), grid_size.x-2), random.randint(1, grid_size.y-2))
         for guard in guards:
             if life_orb.y == guard.y and life_orb.x == guard.x:
-                life_orb = GameObject(random.randint(grid_size.x/2, grid_size.x-2), random.randint(1, grid_size.y-2))
+                life_orb = GameObject(random.randint(round(grid_size.x/2), grid_size.x-2), random.randint(1, grid_size.y-2))
     else:
         li = False
         life_orb = GameObject(grid_size.x-1, grid_size.y-1)
