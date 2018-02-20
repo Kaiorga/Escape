@@ -4,15 +4,25 @@
 import pickle
 
 def display():
-    with open('resources/data/highscore.pickle', 'rb') as highscore:
-        hscore1, hscore2, hscore3, hscore4, hscore5, hscore6 = pickle.load(highscore)
+    try:
+        with open('resources/data/highscore.pickle', 'rb') as highscore:
+            hscore1, hscore2, hscore3, hscore4, hscore5, hscore6 = pickle.load(highscore)
+    except FileNotFoundError:
+        setup('resources/data/highscore.pickle', 'continue')
+        with open('resources/data/highscore.pickle', 'rb') as highscore:
+            hscore1, hscore2, hscore3, hscore4, hscore5, hscore6 = pickle.load(highscore)
     print('Highscore\n','\n1:',hscore1,'\n2:',hscore2,'\n3:',hscore3,'\n4:',hscore4,'\n5:',hscore5,'\n6:',hscore6)
     input()
     return
 
 def update(score):
-    with open('resources/data/highscore.pickle', 'rb') as highscore:
-        hscore1, hscore2, hscore3, hscore4, hscore5, hscore6 = pickle.load(highscore)
+    try:
+        with open('resources/data/highscore.pickle', 'rb') as highscore:
+            hscore1, hscore2, hscore3, hscore4, hscore5, hscore6 = pickle.load(highscore)
+    except FileNotFoundError:
+        setup('resources/data/highscore.pickle', 'continue')
+        with open('resources/data/highscore.pickle', 'rb') as highscore:
+            hscore1, hscore2, hscore3, hscore4, hscore5, hscore6 = pickle.load(highscore)
     if score > hscore1:
         hscore6 = hscore5
         hscore5 = hscore4
@@ -45,7 +55,7 @@ def update(score):
     with open('resources/data/highscore.pickle', 'wb') as highscore:
         pickle.dump([hscore1, hscore2, hscore3, hscore4, hscore5, hscore6], highscore)
 
-def setup(location):
+def setup(location, message):
     print('Creating highscore.pickle...')
     hscore1 = 0
     hscore2 = 0
@@ -56,8 +66,8 @@ def setup(location):
     with open(location, 'wb') as f:
         pickle.dump([hscore1, hscore2, hscore3, hscore4, hscore5, hscore6],f)
     print('Finished creating highscore.pickle')
-    print('Press ENTER to exit')
+    print('Press ENTER to ' + message)
     input()
     
 if __name__ == '__main__':
-    setup('../data/highscore.pickle')
+    setup('../data/highscore.pickle', 'exit')

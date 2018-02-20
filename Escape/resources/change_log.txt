@@ -124,3 +124,8 @@ v 5.1.4
 - Game will now create a config file if one cannot be found upon start
 - Updated config.py to reflect these changes
 - Updated highscore.py for future implementation of creating a highscore file if one is not found
+
+v 5.1.5
+- Game will now create a highscore file if one cannot be found upon start
+- Updated config.py to give a different message depending on how it is accessed
+- Updated highscore.py to give a differnet message dependin on how it is accessed

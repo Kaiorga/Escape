@@ -1,4 +1,4 @@
-#Version 5.1.4
+#Version 5.1.5
 #Escape by TyReesh Boedhram
 #NOTE: This game must be run in Command Prompt on Windows or Terminal in Linux to work properly.
 #This game will not work properly on Sololearn or in IDLE.
@@ -272,7 +272,7 @@ try:
     with open('resources/data/config.pickle', 'rb') as config_file:
         grid_size, color = pickle.load(config_file)
 except FileNotFoundError:
-    config.setup('resources/data/config.pickle')
+    config.setup('resources/data/config.pickle', 'continue')
     with open('resources/data/config.pickle', 'rb') as config_file:
         grid_size, color = pickle.load(config_file)
 os.system('color ' + color.x + color.y)

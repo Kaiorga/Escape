@@ -11,16 +11,16 @@ class GameObject:
         #color uses the Game_Object class
         #background color = x and forground color = y
   
-def setup(location):
+def setup(location, message):
     print('Generating config.pickle ...')
     grid_size = GameObject(16, 10)
     color = GameObject('0', '7')
     with open(location, 'wb') as file:
         pickle.dump([grid_size, color], file)
     print('Finished generating config.pickle')
-    print('Press ENTER to exit')
+    print('Press ENTER to ' + message)
     input()
     return
 
 if __name__ == '__main__':
-    setup('../data/config.pickle')
+    setup('../data/config.pickle', 'exit')
