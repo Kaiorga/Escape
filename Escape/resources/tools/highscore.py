@@ -72,6 +72,7 @@ def setup(location, message):
     print('Finished creating highscore.pickle')
     print('Press ENTER to ' + message)
     input()
+    clear()
 
 
 if __name__ == '__main__':

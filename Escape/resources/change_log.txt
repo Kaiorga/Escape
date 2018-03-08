@@ -135,3 +135,8 @@ v 5.1.6
 
 v 5.1.7
 - Fixed bug that crashed games when grid_size.x was an odd number
+
+v 5.2.0
+- Changed the way inputs are handled.
+	- It is no longer needed to press enter after each key command in menues and during the game.
+- Minor print fixes
