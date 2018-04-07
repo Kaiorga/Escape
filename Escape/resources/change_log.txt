@@ -140,3 +140,8 @@ v 5.2.0
 - Changed the way inputs are handled.
 	- It is no longer needed to press enter after each key command in menues and during the game.
 - Minor print fixes
+
+v 5.2.1
+- Fixed a bug where the program would crash after creating the highscore.pickle file for the first time.
+- Changed the way highscores are handled.
+	- Highscores are now an evergrowing list and not hard coded to 6 highscores.
