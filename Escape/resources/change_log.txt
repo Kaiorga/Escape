@@ -148,3 +148,7 @@ v 5.2.1
 
 v 5.2.2
 - Added compatibility for the new input system for Linux systems.
+
+v 5.2.3
+- Scores can now have a name associeated with them.
+	- It is not nessiscary to include a name.

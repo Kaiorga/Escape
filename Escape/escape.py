@@ -1,8 +1,7 @@
-# Version 5.2.2
+# Version 5.2.3
 # Escape by TyReesh Boedhram
-# NOTE: This game must be run in Command Prompt on Windows to work properly.
+# NOTE: This game must be run in Command Prompt on Windows or Terminal on Linux to work properly.
 # This game will not work properly on Sololearn or in IDLE.
-# New features not tested on Linix yet.
 # Not tested on Mac OSX yet.
 # Please report any bugs.
 
@@ -165,8 +164,12 @@ def end_game():
     if sv is True:
         os.remove(save_location)
     clear()
-    highscore.update(score)
-    print('Game Over\nScore =', score, '\nPress "H" to view highscores')
+    print('Game Over\nScore =', score)
+    player = input('Enter a name to go with your score: ')
+    if player == '':
+        player = '(no name)'
+    highscore.update(score, player)
+    print('Press "H" to view highscores')
     a = get_input()
     clear()
     if a == 'H' or a == 'h':
