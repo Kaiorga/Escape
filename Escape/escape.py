@@ -1,4 +1,4 @@
-# Version 5.2.1
+# Version 5.2.2
 # Escape by TyReesh Boedhram
 # NOTE: This game must be run in Command Prompt on Windows to work properly.
 # This game will not work properly on Sololearn or in IDLE.
@@ -16,7 +16,7 @@ import resources.tools.highscore as highscore
 if op_sys == 'Windows':
     import msvcrt as getkey
 else:
-    import getch as getKey
+    import getch as getkey
 
 
 os.system('title Escape')
@@ -28,6 +28,15 @@ class GameObject:
         self.y = y
         # color uses the GameObject class
         # background color = x and foreground color = y
+
+
+def get_input():
+    if op_sys == 'Windows':
+        user_input = str(getkey.getch())
+        user_input = user_input.replace('b', '').replace('\'', '')
+        return user_input
+    else:
+        return str(getkey.getch())
 
 
 def clear():
@@ -71,18 +80,18 @@ def grid():
 # --Player Commands--
 def player_input():
     global player
-    y = getkey.getch()
-    if y == b'w' and player.y > 1:
+    y = get_input()
+    if y == 'w' and player.y > 1:
         player.y -= 1
-    if y == b'a' and player.x > 0:
+    if y == 'a' and player.x > 0:
         player.x -= 1
-    if y == b's' and player.y < grid_size.y-2:
+    if y == 's' and player.y < grid_size.y-2:
         player.y += 1
-    if y == b'd' and player.x < grid_size.x-1:
+    if y == 'd' and player.x < grid_size.x-1:
         player.x += 1
         if player.y != door and player.x == grid_size.x-1:
             player.x -= 1
-    if y == b'e':
+    if y == 'e':
         pause_menu()
     return
 
@@ -158,9 +167,9 @@ def end_game():
     clear()
     highscore.update(score)
     print('Game Over\nScore =', score, '\nPress "H" to view highscores')
-    a = getkey.getch()
+    a = get_input()
     clear()
-    if a == b'H' or a == b'h':
+    if a == 'H' or a == 'h':
         highscore.display()
     game = False
     menu = True
@@ -188,10 +197,10 @@ def pause_menu():
     while pause is True:
         clear()
         print('Type the number of an option.\n\n1: Return to Game\n2: Save\n3: Main Menu')
-        n = getkey.getch()
-        if n == b'1':
+        n = get_input()
+        if n == '1':
             pause = False
-        if n == b'2':
+        if n == '2':
             clear()
             print('Name this save file\nPress ENTER to use default name')
             save_location = 'resources/save_data/' + input() + '.pickle'
@@ -202,15 +211,15 @@ def pause_menu():
                     clear()
                     print('WARNING: A save file with that name already exists\nSaving will overwrite the last save game'
                           '\nWould you still like to save the game?\n1: Yes\n2: No')
-                    s = getkey.getch()
-                    if s == b'1':
+                    s = get_input()
+                    if s == '1':
                         save()
                         break
-                    if s == b'2':
+                    if s == '2':
                         break
             else:
                 save()   
-        if n == b'3':
+        if n == '3':
             pause = False
             menu = True
             game = False
@@ -230,9 +239,9 @@ def settings_menu():
             print('3: Change Color\n4: Back')
         if op_sys != 'Windows':
             print('3: Back')
-        o = getkey.getch()
+        o = get_input()
         clear()
-        if o == b'1':
+        if o == '1':
             print('Enter a new length\nCurrent length', grid_size.x)
             try:
                 xnew = int(input())
@@ -247,7 +256,7 @@ def settings_menu():
                     xnew = 10
                     input()
             grid_size.x = xnew
-        if o == b'2':
+        if o == '2':
             grid_size.y -= 2
             print('Enter a new height\nCurrent height', grid_size.y)
             try:
@@ -263,7 +272,7 @@ def settings_menu():
                     ynew = 8
                     input()
             grid_size.y = ynew + 2
-        if o == b'3' and op_sys == 'Windows':
+        if o == '3' and op_sys == 'Windows':
             print('Pick a new color\nColors\n0 = Black       8 = Gray\n1 = Blue        9 = Light Blue\n2 = Green       '
                   'A = Light Green\n3 = Aqua        B = Light Aqua\n4 = Red         C = Light Red\n5 = Purple      '
                   'D = Light Purple\n6 = Yellow      E = Light Yellow\n7 = White       F = Bright White'
@@ -287,9 +296,9 @@ def settings_menu():
             color.x = background
             color.y = foreground
             os.system('color ' + color.x + color.y)
-        if o == b'3' and op_sys != 'Windows':
+        if o == '3' and op_sys != 'Windows':
             settings = False
-        if o == b'4' and op_sys == 'Windows':
+        if o == '4' and op_sys == 'Windows':
             settings = False
     with open('resources/data/config.pickle', 'wb') as config_file:
                     pickle.dump([grid_size, color], config_file)
@@ -314,16 +323,16 @@ while master is True:
         clear()
         print('Type the number of an option.\n\n1: New Game\n2: Load Game'
               '\n3: Highscore\n4: Instructions\n5: Settings\n6: Quit')
-        m = getkey.getch()
+        m = get_input()
         clear()
-        if m == b'1':
+        if m == '1':
             menu = False
             game = True
             sv = False
             life_count = 1
             score = 0
             new_round()
-        if m == b'2':
+        if m == '2':
             print('Type in the name of the save file.\nPress ENTER to use the defualt save file')
             save_location = 'resources/save_data/' + input() + '.pickle'
             if save_location == 'resources/save_data/.pickle':
@@ -343,16 +352,16 @@ while master is True:
                 print('Error: Load Failed\nInvalid file name entered')
                 input()
                 
-        if m == b'3':
+        if m == '3':
             highscore.display()
-        if m == b'4':
+        if m == '4':
             print('Instructions\n\nGet your person (i) to the exit (})\nwithout getting caught by the guards (#).'
                   '\n(*) will give you +1 life.\nUse the \'w\',\'a\',\'s\',\'d\' keys to move your character.'
                   '\nUse the \'e\' key to open the pause menu.')
             input()
-        if m == b'5':
+        if m == '5':
             settings_menu()
-        if m == b'6':
+        if m == '6':
             master = False
             menu = False
             game = False
