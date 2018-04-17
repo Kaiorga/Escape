@@ -1,4 +1,4 @@
-# Version 5.2.3
+# Version 5.3.0
 # Escape by TyReesh Boedhram
 # NOTE: This game must be run in Command Prompt on Windows or Terminal on Linux to work properly.
 # This game will not work properly on Sololearn or in IDLE.
@@ -47,7 +47,7 @@ def clear():
 
 
 def grid():
-    global matrix, li
+    global matrix, li, guards
     clear()
     matrix = [[' ' for x in range(grid_size.x)] for y in range(grid_size.y)]
     for sublist in matrix:
@@ -60,10 +60,8 @@ def grid():
         # --game objects--
         matrix[door][grid_size.x-1] = '}'
         matrix[player.y][player.x] = 'i'
-        matrix[guard1.y][guard1.x] = '#'
-        matrix[guard2.y][guard2.x] = '#'
-        matrix[guard3.y][guard3.x] = '#'
-        matrix[guard4.y][guard4.x] = '#'
+        for guard in guards:
+            matrix[guard.y][guard.x] = '#'
         if li is True:
             matrix[life_orb.y][life_orb.x] = '*'
         else:
@@ -97,7 +95,7 @@ def player_input():
 
 # --Guard Movement AI--
 def ai():
-    global guards, guard1, guard2, guard3, guard4
+    global guards
     for guard in guards:
         direction = random.randint(1, 4)
         if direction == 1 and guard.y > 1:
@@ -111,20 +109,19 @@ def ai():
 
 
 def new_round():
-    global door, player, guards, guard1, guard2, guard3, guard4, life_orb, li
+    global door, player, guards, life_orb, li
     door = random.randint(1, grid_size.y-2)
     player = GameObject(0, random.randint(1, grid_size.y-2))
-    guard1 = GameObject(random.randint(2, grid_size.x-2), random.randint(1, grid_size.y-2))
-    guard2 = GameObject(random.randint(2, grid_size.x-2), random.randint(1, grid_size.y-2))
-    guard3 = GameObject(random.randint(2, grid_size.x-2), random.randint(1, grid_size.y-2))
-    guard4 = GameObject(random.randint(2, grid_size.x-2), random.randint(1, grid_size.y-2))
-    guards = [guard1, guard2, guard3, guard4]
+    number_of_guards = round((grid_size.x * (grid_size.y - 2)) / (grid_size.x + (grid_size.y - 2)))
+    guards = []
+    index = 0
+    while index < number_of_guards:
+        guard = GameObject(random.randint(2, grid_size.x-2), random.randint(1, grid_size.y-2))
+        guards.append(guard)
+        index += 1 
     if random.randint(1, 5) == 3:
         li = True
         life_orb = GameObject(random.randint(round(grid_size.x/2), grid_size.x-2), random.randint(1, grid_size.y-2))
-        for guard in guards:
-            if life_orb.y == guard.y and life_orb.x == guard.x:
-                life_orb = GameObject(random.randint(round(grid_size.x/2), grid_size.x-2), random.randint(1, grid_size.y-2))
     else:
         li = False
         life_orb = GameObject(grid_size.x-1, grid_size.y-1)
@@ -184,7 +181,7 @@ def save():
     try:
         with open(save_location, 'wb') as f:
             pickle.dump([grid_size, score, life_count, life_orb, li, player,
-                         guards, guard1, guard2, guard3, guard4, door], f)
+                         guards, door], f)
         clear()
         print('Save Complete')
         input()
@@ -343,7 +340,7 @@ while master is True:
             try:
                 with open(save_location, 'rb') as svdta:
                     grid_size, score, life_count, life_orb, li, player,\
-                        guards, guard1, guard2, guard3, guard4, door = pickle.load(svdta)
+                        guards, door = pickle.load(svdta)
                 menu = False
                 game = True
                 sv = True
