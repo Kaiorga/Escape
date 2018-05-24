@@ -78,17 +78,17 @@ def grid():
 def player_input():
     global player
     y = get_input()
-    if y == 'w' and player.y > 1:
+    if y == controls['up'] and player.y > 1:
         player.y -= 1
-    if y == 'a' and player.x > 0:
+    if y == controls['left'] and player.x > 0:
         player.x -= 1
-    if y == 's' and player.y < grid_size.y-2:
+    if y == controls['down'] and player.y < grid_size.y-2:
         player.y += 1
-    if y == 'd' and player.x < grid_size.x-1:
+    if y == controls['right'] and player.x < grid_size.x-1:
         player.x += 1
         if player.y != door and player.x == grid_size.x-1:
             player.x -= 1
-    if y == 'e':
+    if y == controls['pause']:
         pause_menu()
     return
 
@@ -230,15 +230,16 @@ def pause_menu():
 
 
 def settings_menu():
-    global grid_size
+    global grid_size, controls
     settings = True
     while settings is True:
         clear()
-        print('Settings\n\nType the number of an option.\n\n1: Change grid length\n2: Change grid height')
+        print('Settings\n\nType the number of an option.\n\n1: Change grid length\n2: Change grid height'
+              '\n3: Change Controls')
         if op_sys == 'Windows':
-            print('3: Change Color\n4: Back')
+            print('4: Change Color\n5: Back')
         if op_sys != 'Windows':
-            print('3: Back')
+            print('4: Back')
         o = get_input()
         clear()
         if o == '1':
@@ -272,7 +273,15 @@ def settings_menu():
                     ynew = 8
                     input()
             grid_size.y = ynew + 2
-        if o == '3' and op_sys == 'Windows':
+        if o == '3':
+            print('Current controls')
+            for control in controls:
+                print(control + ':', controls[control])
+            print('Input new controls')
+            for control in controls:
+                new_input = input(control + ': ')
+                controls[control] = new_input
+        if o == '4' and op_sys == 'Windows':
             print('Pick a new color\nColors\n0 = Black       8 = Gray\n1 = Blue        9 = Light Blue\n2 = Green       '
                   'A = Light Green\n3 = Aqua        B = Light Aqua\n4 = Red         C = Light Red\n5 = Purple      '
                   'D = Light Purple\n6 = Yellow      E = Light Yellow\n7 = White       F = Bright White'
@@ -296,23 +305,23 @@ def settings_menu():
             color.x = background
             color.y = foreground
             os.system('color ' + color.x + color.y)
-        if o == '3' and op_sys != 'Windows':
+        if o == '4' and op_sys != 'Windows':
             settings = False
-        if o == '4' and op_sys == 'Windows':
+        if o == '5' and op_sys == 'Windows':
             settings = False
     with open('resources/data/config.pickle', 'wb') as config_file:
-                    pickle.dump([grid_size, color], config_file)
+                    pickle.dump([grid_size, color, controls], config_file)
     return
 
 
 # --master loop--
 try:
     with open('resources/data/config.pickle', 'rb') as config_file:
-        grid_size, color = pickle.load(config_file)
+        grid_size, color, controls = pickle.load(config_file)
 except FileNotFoundError:
     config.setup('resources/data/config.pickle', 'continue')
     with open('resources/data/config.pickle', 'rb') as config_file:
-        grid_size, color = pickle.load(config_file)
+        grid_size, color, controls = pickle.load(config_file)
 os.system('color ' + color.x + color.y)
 master = True
 menu = True
@@ -356,8 +365,9 @@ while master is True:
             highscore.display()
         if m == '4':
             print('Instructions\n\nGet your person (i) to the exit (})\nwithout getting caught by the guards (#).'
-                  '\n(*) will give you +1 life.\nUse the \'w\',\'a\',\'s\',\'d\' keys to move your character.'
-                  '\nUse the \'e\' key to open the pause menu.')
+                  '\n(*) will give you +1 life.\nUse the \'' + controls['up'] + '\',\'' + controls['left'] + '\',\'' +
+                  controls['down'] + '\',\'' + controls['right'] + '\' keys to move your character.'
+                  '\nUse the \'' + controls['pause'] + '\' key to open the pause menu.')
             input()
         if m == '5':
             settings_menu()
@@ -365,7 +375,6 @@ while master is True:
             master = False
             menu = False
             game = False
-
 
     # --game loop--
     while game is True:

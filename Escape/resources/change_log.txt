@@ -138,20 +138,26 @@ v 5.1.7
 
 v 5.2.0
 - Changed the way inputs are handled.
-	- It is no longer needed to press enter after each key command in menues and during the game.
+	- It is no longer needed to press enter after each key command in menus and during the game.
 - Minor print fixes
 
 v 5.2.1
 - Fixed a bug where the program would crash after creating the highscore.pickle file for the first time.
 - Changed the way highscores are handled.
-	- Highscores are now an evergrowing list and not hard coded to 6 highscores.
+	- Highscores are now an ever-growing list and not hard coded to 6 highscores.
 
 v 5.2.2
 - Added compatibility for the new input system for Linux systems.
 
 v 5.2.3
-- Scores can now have a name associeated with them.
-	- It is not nessiscary to include a name.
+- Scores can now have a name associated with them.
+	- It is not necessary to include a name.
 
 v 5.3.0
 - The number of guards now changes depending on the grid size.
+
+v 5.3.1
+- Controls can now be changed in settings.
+- Control bindings are now stored in config.pickle.
+	- config.py now creates a dictionary storing key bindings.
+- Instructions will change based on keybindings in config.pickle.
