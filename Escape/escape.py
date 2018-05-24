@@ -1,7 +1,7 @@
-# Version 5.3.0
+# Version 5.3.1
 # Escape by TyReesh Boedhram
 # NOTE: This game must be run in Command Prompt on Windows or Terminal on Linux to work properly.
-# This game will not work properly on Sololearn or in IDLE.
+# This game will not work properly in IDLE.
 # Not tested on Mac OSX yet.
 # Please report any bugs.
 
