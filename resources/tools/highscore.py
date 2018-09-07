@@ -43,7 +43,7 @@ def display():
         print('Rank\tScore\tName')
         while index < len(highscores):
             print('{rank}:\t{score}\t{name}'.format(rank=index+1, score=highscores[index], name=player_names[index]))
-            index +=1
+            index += 1
     input()
     return
 

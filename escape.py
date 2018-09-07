@@ -9,13 +9,13 @@ import os
 import pickle
 import random
 import platform
-op_sys = platform.system()
 import resources.tools.config as config
-import resources.tools.highscore as highscore 
+import resources.tools.highscore as highscore
+op_sys = platform.system()
 if op_sys == 'Windows':
-    import msvcrt as getkey
+    import msvcrt as get_key
 else:
-    import getch as getkey
+    import getch as get_key
 
 
 os.system('title Escape')
@@ -31,11 +31,11 @@ class GameObject:
 
 def get_input():
     if op_sys == 'Windows':
-        user_input = str(getkey.getch())
+        user_input = str(get_key.getch())
         user_input = user_input.replace('b', '').replace('\'', '')
         return user_input
     else:
-        return str(getkey.getch())
+        return str(get_key.getch())
 
 
 def clear():
