@@ -1,41 +1,25 @@
-# This tool is used to generate highscore.pickle
-# This tool can be used to override an existing highscore.pickle
+# This tool is used to generate and update highscores.
 
-import os
 import pickle
-import platform
-op_sys = platform.system()
 
 
-def clear():
-    if op_sys == 'Windows':
-        os.system('cls')
-    else:
-        os.system('clear')
-    return
-
-
-def setup(location, message):
-    print('Creating highscore.pickle...')
+def setup(location):
     highscores = []
     player_names = []
     with open(location, 'wb') as f:
         pickle.dump([highscores, player_names], f)
-    print('Finished creating highscore.pickle')
-    print('Press ENTER to ' + message)
-    input()
-    clear()
     return
 
 
-def display():
+def display(grid_size):
     try:
-        with open('resources/data/highscore.pickle', 'rb') as f:
+        with open('resources/data/highscore-{x},{y}.pickle'.format(x=grid_size.x, y=grid_size.y-2), 'rb') as f:
             highscores, player_names = pickle.load(f)
     except FileNotFoundError:
-        setup('resources/data/highscore.pickle', 'continue')
-        with open('resources/data/highscore.pickle', 'rb') as f:
+        setup('resources/data/highscore-{x},{y}.pickle'.format(x=grid_size.x, y=grid_size.y-2))
+        with open('resources/data/highscore-{x},{y}.pickle'.format(x=grid_size.x, y=grid_size.y-2), 'rb') as f:
             highscores, player_names = pickle.load(f)
+    print('Highscores for grid size {x},{y}\n'.format(x=grid_size.x, y=grid_size.y-2))
     if len(highscores) == 0:
         print('No scores to show')
     else:
@@ -43,18 +27,18 @@ def display():
         print('Rank\tScore\tName')
         while index < len(highscores):
             print('{rank}:\t{score}\t{name}'.format(rank=index+1, score=highscores[index], name=player_names[index]))
-            index += 1
+            index +=1
     input()
     return
 
 
-def update(score, player):
+def update(score, player, grid_size):
     try:
-        with open('resources/data/highscore.pickle', 'rb') as f:
+        with open('resources/data/highscore-{x},{y}.pickle'.format(x=grid_size.x, y=grid_size.y-2), 'rb') as f:
             highscores, player_names = pickle.load(f)
     except FileNotFoundError:
-        setup('resources/data/highscore.pickle', 'continue')
-        with open('resources/data/highscore.pickle', 'rb') as f:
+        setup('resources/data/highscore-{x},{y}.pickle'.format(x=grid_size.x, y=grid_size.y-2))
+        with open('resources/data/highscore-{x},{y}.pickle'.format(x=grid_size.x, y=grid_size.y-2), 'rb') as f:
             highscores, player_names = pickle.load(f)
     if len(highscores) == 0:
         highscores.append(score)
@@ -70,10 +54,6 @@ def update(score, player):
         if index == len(highscores):
             highscores.append(score)
             player_names.append(player)
-    with open('resources/data/highscore.pickle', 'wb') as f:
+    with open('resources/data/highscore-{x},{y}.pickle'.format(x=grid_size.x, y=grid_size.y-2), 'wb') as f:
         pickle.dump([highscores, player_names], f)
     return
-
-
-if __name__ == '__main__':
-    setup('../data/highscore.pickle', 'exit')

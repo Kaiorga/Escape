@@ -1,4 +1,4 @@
-# Version 5.3.1
+# Version 5.4.0
 # Escape by TyReesh Boedhram
 # NOTE: This game must be run in Command Prompt on Windows or Terminal on Linux to work properly.
 # This game will not work properly in IDLE.
@@ -10,6 +10,7 @@ import pickle
 import random
 import platform
 import resources.tools.config as config
+from resources.tools.config import GameObject
 import resources.tools.highscore as highscore
 op_sys = platform.system()
 if op_sys == 'Windows':
@@ -21,15 +22,9 @@ else:
 os.system('title Escape')
 
 
-class GameObject:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        # color uses the GameObject class
-        # background color = x and foreground color = y
-
-
-def get_input():
+def get_input(message=''):
+    if message != '':
+        print(message)
     if op_sys == 'Windows':
         user_input = str(get_key.getch())
         user_input = user_input.replace('b', '').replace('\'', '')
@@ -70,7 +65,7 @@ def grid():
         s = str(sublist)
         s = s.replace('[', '|').replace(']', '|').replace(',', '').replace('\'', '')
         print(s)
-    print('Score:', score, 'Lives:', life_count)
+    print('Score: {score}\tLives: {lives}'.format(score=score, lives=life_count))
     return
 
 
@@ -161,16 +156,14 @@ def end_game():
     if sv is True:
         os.remove(save_location)
     clear()
-    print('Game Over\nScore =', score)
-    player = input('Enter a name to go with your score: ')
+    player = input('Game Over\nScore: {score}\nEnter a name to go with your score: '.format(score=score))
     if player == '':
         player = '(no name)'
-    highscore.update(score, player)
-    print('Press "H" to view highscores')
-    a = get_input()
+    highscore.update(score, player, grid_size)
+    a = get_input('Press "H" to view highscores')
     clear()
     if a == 'H' or a == 'h':
-        highscore.display()
+        highscore.display(grid_size)
     game = False
     menu = True
     return
@@ -183,12 +176,10 @@ def save():
             pickle.dump([grid_size, score, life_count, life_orb, li, player,
                          guards, door], f)
         clear()
-        print('Save Complete')
-        input()
+        input('Save Complete')
         sv = True
     except OSError:
-        print('Error: Save Failed\nInvalid file name entered')
-        input()
+        input('Error: Save Failed\nInvalid file name entered')
 
 
 def pause_menu():
@@ -196,22 +187,21 @@ def pause_menu():
     pause = True
     while pause is True:
         clear()
-        print('Type the number of an option.\n\n1: Return to Game\n2: Save\n3: Main Menu')
-        n = get_input()
+        n = get_input('Type the number of an option.\n\n1: Return to Game\n2: Save\n3: Main Menu')
         if n == '1':
             pause = False
         if n == '2':
             clear()
             print('Name this save file\nPress ENTER to use default name')
-            save_location = 'resources/save_data/' + input() + '.pickle'
+            save_location = 'resources/save_data/{name}.pickle'.format(name=input())
             if save_location == 'resources/save_data/.pickle':
                 save_location = 'resources/save_data/svdta.pickle'
             if os.path.isfile(save_location):
                 while True:
                     clear()
-                    print('WARNING: A save file with that name already exists\nSaving will overwrite the last save game'
-                          '\nWould you still like to save the game?\n1: Yes\n2: No')
-                    s = get_input()
+                    s = get_input('WARNING: A save file with that name already exists\n'
+                                  'Saving will overwrite the last save game\n'
+                                  'Would you still like to save the game?\n1: Yes\n2: No')
                     if s == '1':
                         save()
                         break
@@ -243,44 +233,40 @@ def settings_menu():
         o = get_input()
         clear()
         if o == '1':
-            print('Enter a new length\nCurrent length', grid_size.x)
+            print('Enter a new length\nCurrent length {length}'.format(length=grid_size.x))
             try:
                 xnew = int(input())
             except ValueError:
                 xnew = grid_size.x
             if xnew < 10:
                 if xnew > 4:
-                    print('WARNING: This grid size might not be playable')
-                    input()
+                    input('WARNING: This grid size might not be playable')
                 if xnew < 5:
-                    print('Entered value is to small. Length set to 10')
+                    input('Entered value is to small. Length set to 10')
                     xnew = 10
-                    input()
             grid_size.x = xnew
         if o == '2':
             grid_size.y -= 2
-            print('Enter a new height\nCurrent height', grid_size.y)
+            print('Enter a new height\nCurrent height {height}'.format(height=grid_size.y))
             try:
                 ynew = int(input())
             except ValueError:
                 ynew = grid_size.y
             if ynew < 8:
                 if ynew > 4:
-                    print('WARNING: This grid size might not be playable')
-                    input()
+                    input('WARNING: This grid size might not be playable')
                 if ynew < 5:
-                    print('Entered value is to small. Height set to 8')
+                    input('Entered value is to small. Height set to 8')
                     ynew = 8
-                    input()
             grid_size.y = ynew + 2
         if o == '3':
             print('Current controls')
             for control in controls:
-                print(control + ':', controls[control])
+                print('{control}: {key}'.format(control=control, key=controls[control]))
             print('Input new controls')
             for control in controls:
-                new_input = input(control + ': ')
-                controls[control] = new_input
+                controls[control] = input('{control}: '.format(control=control))
+                
         if o == '4' and op_sys == 'Windows':
             print('Pick a new color\nColors\n0 = Black       8 = Gray\n1 = Blue        9 = Light Blue\n2 = Green       '
                   'A = Light Green\n3 = Aqua        B = Light Aqua\n4 = Red         C = Light Red\n5 = Purple      '
@@ -288,23 +274,20 @@ def settings_menu():
                   '\nEntering anything other than one of the colors listed will set colors to default')
             color_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
                           'a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']
-            print('Background Color')
-            background = input()
+            background = input('Background Color: ')
             if background not in color_list:
                 background = color.x
-            print('Text Color')
-            foreground = input()
+            foreground = input('Text Color: ')
             if foreground not in color_list:
                 foreground = color.y
             if background == foreground:
-                print('ERROR: Background and text color cannot be the same.'
+                input('ERROR: Background and text color cannot be the same.'
                       '\nRestoring from config file.\nPress ENTER to continue.')
-                input()
                 background = color.x
                 foreground = color.y
             color.x = background
             color.y = foreground
-            os.system('color ' + color.x + color.y)
+            os.system('color {x}{y}'.format(x=color.x, y=color.y))
         if o == '4' and op_sys != 'Windows':
             settings = False
         if o == '5' and op_sys == 'Windows':
@@ -319,10 +302,10 @@ try:
     with open('resources/data/config.pickle', 'rb') as config_file:
         grid_size, color, controls = pickle.load(config_file)
 except FileNotFoundError:
-    config.setup('resources/data/config.pickle', 'continue')
+    config.setup('resources/data/config.pickle')
     with open('resources/data/config.pickle', 'rb') as config_file:
         grid_size, color, controls = pickle.load(config_file)
-os.system('color ' + color.x + color.y)
+os.system('color {x}{y}'.format(x=color.x, y=color.y))
 master = True
 menu = True
 game = False
@@ -330,9 +313,8 @@ while master is True:
     # --menu loop--
     while menu is True:
         clear()
-        print('Type the number of an option.\n\n1: New Game\n2: Load Game'
-              '\n3: Highscore\n4: Instructions\n5: Settings\n6: Quit')
-        m = get_input()
+        m = get_input('Type the number of an option.\n\n1: New Game\n2: Load Game'
+                      '\n3: Highscore\n4: Instructions\n5: Settings\n6: Quit')
         clear()
         if m == '1':
             menu = False
@@ -343,7 +325,7 @@ while master is True:
             new_round()
         if m == '2':
             print('Type in the name of the save file.\nPress ENTER to use the defualt save file')
-            save_location = 'resources/save_data/' + input() + '.pickle'
+            save_location = 'resources/save_data/{name}.pickle'.format(name=input())
             if save_location == 'resources/save_data/.pickle':
                 save_location = 'resources/save_data/svdta.pickle'
             try:
@@ -355,20 +337,21 @@ while master is True:
                 sv = True
                 grid()
             except FileNotFoundError:
-                print('No save data found')
-                input()
+                input('No save data found')
             except OSError:
-                print('Error: Load Failed\nInvalid file name entered')
-                input()
+                input('Error: Load Failed\nInvalid file name entered')
                 
         if m == '3':
-            highscore.display()
+            highscore.display(grid_size)
         if m == '4':
-            print('Instructions\n\nGet your person (i) to the exit (})\nwithout getting caught by the guards (#).'
-                  '\n(*) will give you +1 life.\nUse the \'' + controls['up'] + '\',\'' + controls['left'] + '\',\'' +
-                  controls['down'] + '\',\'' + controls['right'] + '\' keys to move your character.'
-                  '\nUse the \'' + controls['pause'] + '\' key to open the pause menu.')
-            input()
+            input('Instructions\n\n'
+                  'Get your person (i) to the exit ({door})\n'
+                  'without getting caught by the guards (#).\n'
+                  '(*) will give you +1 life.\n'
+                  'Use the \'{up}\',\'{left}\',\'{down}\',\'{right}\' keys to move your character.\n'
+                  'Use the \'{pause}\' key to open the pause menu.'.format(door='}', up=controls['up'],
+                                                                           left=controls['left'], down=controls['down'],
+                                                                           right=controls['right'], pause=controls['pause']))
         if m == '5':
             settings_menu()
         if m == '6':

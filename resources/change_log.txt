@@ -161,3 +161,13 @@ v 5.3.1
 - Control bindings are now stored in config.pickle.
 	- config.py now creates a dictionary storing key bindings.
 - Instructions will change based on keybindings in config.pickle.
+
+v 5.4.0
+- Highscores are now broken up by grid size.
+	- Each grid size is it's own highscores-'x','y'.pickle file.
+- highscore.py and config.py can no longer be run individually.
+    - A generation message is no longer made highscore.setup() is run.
+- Changed all string concatenations to 'string'.format.
+- Changed get_input() to accept strings to print
+    - This is to mimic the native input() function.
+- Removed GameObject class from escape.py and imported it from config.py.
