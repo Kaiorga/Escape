@@ -171,3 +171,8 @@ v 5.4.0
 - Changed get_input() to accept strings to print
     - This is to mimic the native input() function.
 - Removed GameObject class from escape.py and imported it from config.py.
+
+v 5.4.1
+- Renamed some variables for clarity.
+- While loops follow better coding practice.
+- Added error messages for entering invalid lengths and heights.
