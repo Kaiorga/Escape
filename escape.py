@@ -1,4 +1,4 @@
-# Version 5.4.1
+# Version 5.5.0
 # Escape by TyReesh Boedhram
 # NOTE: This game must be run in Command Prompt on Windows or Terminal on Linux to work properly.
 # This game will not work properly in IDLE.
@@ -12,17 +12,18 @@ import platform
 import resources.tools.config as config
 from resources.tools.config import GameObject
 import resources.tools.highscore as highscore
+
 op_sys = platform.system()
 if op_sys == 'Windows':
     import msvcrt as get_key
 else:
     import getch as get_key
 
-
 os.system('title Escape')
 
 
 def get_input(message=''):
+    return input(message)
     if message != '':
         print(message)
     if op_sys == 'Windows':
@@ -42,17 +43,17 @@ def clear():
 
 
 def grid():
-    global matrix, life_orb_active, guards
+    global life_orb_active, guards
     clear()
     matrix = [[' ' for _ in range(grid_size.x)] for _ in range(grid_size.y)]
-#   --top and bottom border--
+    #   --top and bottom border--
     column = 0
     while column < grid_size.x:
         matrix[0][column] = '-'
-        matrix[grid_size.y-1][column] = '-'
+        matrix[grid_size.y - 1][column] = '-'
         column += 1
-#   --game objects--
-    matrix[door][grid_size.x-1] = '}'
+    #   --game objects--
+    matrix[door][grid_size.x - 1] = '}'
     matrix[player.y][player.x] = 'i'
     for guard in guards:
         matrix[guard.y][guard.x] = '#'
@@ -60,7 +61,7 @@ def grid():
         matrix[life_orb.y][life_orb.x] = '*'
     else:
         matrix[life_orb.y][life_orb.x] = '-'
-#   --removes extra characters--
+    #   --removes extra characters--
     for row in matrix:
         row_string = str(row)
         row_string = row_string.replace('[', '|').replace(']', '|').replace(',', '').replace('\'', '')
@@ -77,11 +78,11 @@ def player_input():
         player.y -= 1
     if y == controls['left'] and player.x > 0:
         player.x -= 1
-    if y == controls['down'] and player.y < grid_size.y-2:
+    if y == controls['down'] and player.y < grid_size.y - 2:
         player.y += 1
-    if y == controls['right'] and player.x < grid_size.x-1:
+    if y == controls['right'] and player.x < grid_size.x - 1:
         player.x += 1
-        if player.y != door and player.x == grid_size.x-1:
+        if player.y != door and player.x == grid_size.x - 1:
             player.x -= 1
     if y == controls['pause']:
         pause_menu()
@@ -95,9 +96,9 @@ def ai():
         direction = random.randint(1, 4)
         if direction == 1 and guard.y > 1:
             guard.y -= 1
-        if direction == 2 and guard.x < grid_size.x-2:
+        if direction == 2 and guard.x < grid_size.x - 2:
             guard.x += 1
-        if direction == 3 and guard.y < grid_size.y-2:
+        if direction == 3 and guard.y < grid_size.y - 2:
             guard.y += 1
         if direction == 4 and guard.x > 0:
             guard.x -= 1
@@ -105,21 +106,22 @@ def ai():
 
 def new_round():
     global door, player, guards, life_orb, life_orb_active
-    door = random.randint(1, grid_size.y-2)
-    player = GameObject(0, random.randint(1, grid_size.y-2))
-    number_of_guards = round((grid_size.x * (grid_size.y - 2)) / (grid_size.x + (grid_size.y - 2)))
+    door = random.randint(1, grid_size.y - 2)
+    player = GameObject(0, random.randint(1, grid_size.y - 2))
+    number_of_guards = round((grid_size.x * (grid_size.y - 2)) * difficulty)
     guards = []
-    index = 0
-    while index < number_of_guards:
-        guard = GameObject(random.randint(2, grid_size.x-2), random.randint(1, grid_size.y-2))
-        guards.append(guard)
+    index = 1
+    while index <= number_of_guards:
+        new_guard = GameObject(random.randint(2, grid_size.x - 2), random.randint(1, grid_size.y - 2))
+        guards.append(new_guard)
         index += 1
     if random.randint(1, 5) == 3:
         life_orb_active = True
-        life_orb = GameObject(random.randint(round(grid_size.x/2), grid_size.x-2), random.randint(1, grid_size.y-2))
+        life_orb = GameObject(random.randint(round(grid_size.x / 2), grid_size.x - 2),
+                              random.randint(1, grid_size.y - 2))
     else:
         life_orb_active = False
-        life_orb = GameObject(grid_size.x-1, grid_size.y-1)
+        life_orb = GameObject(grid_size.x - 1, grid_size.y - 1)
     grid()
     return
 
@@ -134,8 +136,8 @@ def life():
 
 def life_2():
     global life_orb, life_orb_active
-    life_orb.y = grid_size.y-1
-    life_orb.x = grid_size.x-1
+    life_orb.y = grid_size.y - 1
+    life_orb.x = grid_size.x - 1
     life_orb_active = False
     grid()
     return
@@ -156,14 +158,14 @@ def end_game():
     if save_active:
         os.remove(save_location)
     clear()
-    player = input('Game Over\nScore: {score}\nEnter a name to go with your score: '.format(score=score))
-    if player == '':
-        player = '(no name)'
-    highscore.update(score, player, grid_size)
+    player_name = input('Game Over\nScore: {score}\nEnter a name to go with your score: '.format(score=score))
+    if player_name == '':
+        player_name = '(no name)'
+    highscore.update(score, player_name, grid_size, difficulty)
     a = get_input('Press "H" to view highscores')
     clear()
     if a == 'H' or a == 'h':
-        highscore.display(grid_size)
+        highscore.display(grid_size, difficulty)
     game = False
     menu = True
     return
@@ -174,7 +176,7 @@ def save():
     try:
         with open(save_location, 'wb') as f:
             pickle.dump([grid_size, score, life_count, life_orb, life_orb_active, player,
-                         guards, door], f)
+                         guards, door, difficulty], f)
         clear()
         input('Save Complete')
         save_active = True
@@ -207,7 +209,7 @@ def pause_menu():
                     if s == '2':
                         break
             else:
-                save()   
+                save()
         if option == '3':
             menu = True
             game = False
@@ -219,15 +221,15 @@ def pause_menu():
 
 
 def settings_menu():
-    global grid_size, controls
+    global grid_size, controls, difficulty
     while True:
         clear()
         print('Settings\n\nType the number of an option.\n\n1: Change grid length\n2: Change grid height'
-              '\n3: Change Controls')
+              '\n3: Change Controls\n4: Change Difficulty')
         if op_sys == 'Windows':
-            print('4: Change Color\n5: Back')
+            print('5: Change Color\n6: Back')
         if op_sys != 'Windows':
-            print('4: Back')
+            print('5: Back')
         option = get_input()
         clear()
         if option == '1':
@@ -268,7 +270,22 @@ def settings_menu():
             print('Input new controls')
             for control in controls:
                 controls[control] = input('{control}: '.format(control=control))
-        if option == '4' and op_sys == 'Windows':
+        if option == '4':
+            print('Please enter a number between 1 (easy) and 10 (hard).'
+                  '\nCurrent Difficulty: {difficulty}'.format(difficulty=difficulty * 100))
+            try:
+                new_difficulty = float(input()) / 100
+                if new_difficulty < .01:
+                    input('ERROR: Number must be greater than 1')
+                    new_difficulty = difficulty
+                if new_difficulty > .1:
+                    input('ERROR: Number must be less than 10')
+                    new_difficulty = difficulty
+            except ValueError:
+                input('ERROR: Difficulty must be a number between 1 and 10')
+                new_difficulty = difficulty
+            difficulty = new_difficulty
+        if option == '5' and op_sys == 'Windows':
             print('Pick a new color\nColors'
                   '\n0 = Black       8 = Gray\n1 = Blue        9 = Light Blue'
                   '\n2 = Green       A = Light Green\n3 = Aqua        B = Light Aqua'
@@ -291,23 +308,23 @@ def settings_menu():
             color.x = background
             color.y = foreground
             os.system('color {x}{y}'.format(x=color.x, y=color.y))
-        else:
+        elif option == '4' and op_sys != 'Windows':
             break
-        if option == '5' and op_sys == 'Windows':
+        if option == '6' and op_sys == 'Windows':
             break
     with open('resources/data/config.pickle', 'wb') as config_file:
-                    pickle.dump([grid_size, color, controls], config_file)
+        pickle.dump([grid_size, color, controls, difficulty], config_file)
     return
 
 
 # --master loop--
 try:
     with open('resources/data/config.pickle', 'rb') as config_file:
-        grid_size, color, controls = pickle.load(config_file)
+        grid_size, color, controls, difficulty = pickle.load(config_file)
 except FileNotFoundError:
     config.setup('resources/data/config.pickle')
     with open('resources/data/config.pickle', 'rb') as config_file:
-        grid_size, color, controls = pickle.load(config_file)
+        grid_size, color, controls, difficulty = pickle.load(config_file)
 os.system('color {x}{y}'.format(x=color.x, y=color.y))
 master = True
 menu = True
@@ -317,7 +334,7 @@ while master is True:
     while menu is True:
         clear()
         option = get_input('Type the number of an option.\n\n1: New Game\n2: Load Game'
-                      '\n3: Highscore\n4: Instructions\n5: Settings\n6: Quit')
+                           '\n3: Highscore\n4: Instructions\n5: Settings\n6: Quit')
         clear()
         if option == '1':
             menu = False
@@ -333,8 +350,8 @@ while master is True:
                 save_location = 'resources/save_data/svdta.pickle'
             try:
                 with open(save_location, 'rb') as svdta:
-                    grid_size, score, life_count, life_orb, life_orb_active, player,\
-                        guards, door = pickle.load(svdta)
+                    grid_size, score, life_count, life_orb, life_orb_active, player, guards, \
+                    door, difficulty = pickle.load(svdta)
                 menu = False
                 game = True
                 save_active = True
@@ -343,9 +360,8 @@ while master is True:
                 input('No save file found')
             except OSError:
                 input('Error: Load Failed\nInvalid file name entered')
-                
         if option == '3':
-            highscore.display(grid_size)
+            highscore.display(grid_size, difficulty)
         if option == '4':
             input('Instructions\n\n'
                   'Get your person (i) to the exit ({door})\n'
@@ -354,7 +370,8 @@ while master is True:
                   'Use the \'{up}\',\'{left}\',\'{down}\',\'{right}\' keys to move your character.\n'
                   'Use the \'{pause}\' key to open the pause menu.'.format(door='}', up=controls['up'],
                                                                            left=controls['left'], down=controls['down'],
-                                                                           right=controls['right'], pause=controls['pause']))
+                                                                           right=controls['right'],
+                                                                           pause=controls['pause']))
         if option == '5':
             settings_menu()
         if option == '6':
@@ -369,7 +386,7 @@ while master is True:
         if n is True:
             ai()
             grid()
-        if player.y == door and player.x == grid_size.x-1:
+        if player.y == door and player.x == grid_size.x - 1:
             score += 1
             new_round()
         if player.y == life_orb.y and player.x == life_orb.x:
@@ -380,11 +397,11 @@ while master is True:
                 life_2()
             if player.y == guard.y and player.x == guard.x:
                 end_round()
-            if player.y == guard.y and player.x == guard.x-1:
+            if player.y == guard.y and player.x == guard.x - 1:
                 end_round()
-            if player.y == guard.y and player.x == guard.x+1:
+            if player.y == guard.y and player.x == guard.x + 1:
                 end_round()
-            if player.y == guard.y-1 and player.x == guard.x:
+            if player.y == guard.y - 1 and player.x == guard.x:
                 end_round()
-            if player.y == guard.y+1 and player.x == guard.x:
+            if player.y == guard.y + 1 and player.x == guard.x:
                 end_round()

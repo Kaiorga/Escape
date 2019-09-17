@@ -12,11 +12,12 @@ class GameObject:
 
 
 def setup(location):
-    print('Generating config.pickle ...')
+    print('Could not find config file\nGenerating new config file ...')
     grid_size = GameObject(16, 10)
     color = GameObject('0', '7')
     controls = {'up': 'w', 'left': 'a', 'down': 's', 'right': 'd', 'pause': 'e'}
+    difficulty = 0.03125
     with open(location, 'wb') as file:
-        pickle.dump([grid_size, color, controls], file)
-    input('Finished generating config.pickle\nPress ENTER to continue')
+        pickle.dump([grid_size, color, controls, difficulty], file)
+    input('Finished generating config file\nPress ENTER to continue')
     return

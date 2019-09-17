@@ -176,3 +176,9 @@ v 5.4.1
 - Renamed some variables for clarity.
 - While loops follow better coding practice.
 - Added error messages for entering invalid lengths and heights.
+
+v 5.5.0
+- Changed how the number of enimies scales with grid size
+- Added difficulty setting
+- Highscores are now also broken up by difficulty
+	- Highscore file is now 'highscore-x{length}y{height}d{difficulty}'
