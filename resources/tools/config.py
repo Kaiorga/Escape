@@ -78,14 +78,14 @@ def change_difficulty(difficulty):
         new_difficulty = float(input()) / 100
         if new_difficulty < .01:
             input('ERROR: Number must be greater than 1')
-            new_difficulty = difficulty
+            return difficulty
         if new_difficulty > .1:
             input('ERROR: Number must be less than 10')
-            new_difficulty = difficulty
+            return difficulty
+        return new_difficulty
     except ValueError:
         input('ERROR: Difficulty must be a number between 1 and 10')
-        new_difficulty = difficulty
-    return new_difficulty
+        return difficulty
 
 
 def change_color(color):

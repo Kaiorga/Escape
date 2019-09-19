@@ -1,4 +1,4 @@
-# Version 6.0.0
+# Version 6.0.1
 # Escape by TyReesh Boedhram
 # NOTE: This game must be run in Command Prompt on Windows or Terminal on Linux to work properly.
 # This game will not work properly in IDLE.

@@ -195,3 +195,6 @@ V 6.0.0 - Configuration Update
     - Handles os calls that vary between operation systems
         - ex: 'cls' vs 'clear'
 - Updated small grid size warnings
+
+v 6.0.1
+- Minor change with return statements in 'config.py'
