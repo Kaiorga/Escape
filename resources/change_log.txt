@@ -198,3 +198,6 @@ V 6.0.0 - Configuration Update
 
 v 6.0.1
 - Minor change with return statements in 'config.py'
+
+v 6.0.2
+- Removed commented out code used for debugging

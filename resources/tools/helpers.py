@@ -14,7 +14,6 @@ def get_os():
 
 
 def get_input(message=''):
-    # return input(message)
     if message != '':
         print(message)
     if get_os() == 'Windows':
