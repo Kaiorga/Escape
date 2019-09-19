@@ -63,6 +63,6 @@ def update(score, player, grid_size, difficulty):
             highscores.append(score)
             player_names.append(player)
     with open('resources/data/highscore-x{x}y{y}d{difficulty}.pickle'.format(x=grid_size.x, y=grid_size.y - 2,
-                                                                             difficulty=difficulty), 'rb') as f:
+                                                                             difficulty=difficulty), 'wb') as f:
         pickle.dump([highscores, player_names], f)
     return

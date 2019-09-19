@@ -182,3 +182,6 @@ v 5.5.0
 - Added difficulty setting
 - Highscores are now also broken up by difficulty
 	- Highscore file is now 'highscore-x{length}y{height}d{difficulty}'
+
+v 5.5.1
+- Fixed bug where trying to update highscores would cause the game to crash
