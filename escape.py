@@ -1,4 +1,4 @@
-# Version 5.5.0
+# Version 6.0.0
 # Escape by TyReesh Boedhram
 # NOTE: This game must be run in Command Prompt on Windows or Terminal on Linux to work properly.
 # This game will not work properly in IDLE.
@@ -8,43 +8,15 @@
 import os
 import pickle
 import random
-import platform
 import resources.tools.config as config
 from resources.tools.config import GameObject
 import resources.tools.highscore as highscore
-
-op_sys = platform.system()
-if op_sys == 'Windows':
-    import msvcrt as get_key
-else:
-    import getch as get_key
-
-os.system('title Escape')
-
-
-def get_input(message=''):
-    return input(message)
-    if message != '':
-        print(message)
-    if op_sys == 'Windows':
-        user_input = str(get_key.getch())
-        user_input = user_input.replace('b', '').replace('\'', '')
-        return user_input
-    else:
-        return str(get_key.getch())
-
-
-def clear():
-    if op_sys == 'Windows':
-        os.system('cls')
-    else:
-        os.system('clear')
-    return
+import resources.tools.helpers as helpers
 
 
 def grid():
     global life_orb_active, guards
-    clear()
+    helpers.clear()
     matrix = [[' ' for _ in range(grid_size.x)] for _ in range(grid_size.y)]
     #   --top and bottom border--
     column = 0
@@ -73,7 +45,7 @@ def grid():
 # --Player Commands--
 def player_input():
     global player
-    y = get_input()
+    y = helpers.get_input()
     if y == controls['up'] and player.y > 1:
         player.y -= 1
     if y == controls['left'] and player.x > 0:
@@ -157,13 +129,13 @@ def end_game():
     global game, menu, save_active, save_location
     if save_active:
         os.remove(save_location)
-    clear()
+    helpers.clear()
     player_name = input('Game Over\nScore: {score}\nEnter a name to go with your score: '.format(score=score))
     if player_name == '':
         player_name = '(no name)'
     highscore.update(score, player_name, grid_size, difficulty)
-    a = get_input('Press "H" to view highscores')
-    clear()
+    a = helpers.get_input('Press "H" to view highscores')
+    helpers.clear()
     if a == 'H' or a == 'h':
         highscore.display(grid_size, difficulty)
     game = False
@@ -177,7 +149,7 @@ def save():
         with open(save_location, 'wb') as f:
             pickle.dump([grid_size, score, life_count, life_orb, life_orb_active, player,
                          guards, door, difficulty], f)
-        clear()
+        helpers.clear()
         input('Save Complete')
         save_active = True
     except OSError:
@@ -187,22 +159,22 @@ def save():
 def pause_menu():
     global game, menu, save_location, n
     while True:
-        clear()
-        option = get_input('Type the number of an option.\n\n1: Return to Game\n2: Save\n3: Main Menu')
+        helpers.clear()
+        option = helpers.get_input('Type the number of an option.\n\n1: Return to Game\n2: Save\n3: Main Menu')
         if option == '1':
             break
         if option == '2':
-            clear()
+            helpers.clear()
             print('Name this save file\nPress ENTER to use default name')
             save_location = 'resources/save_data/{name}.pickle'.format(name=input())
             if save_location == 'resources/save_data/.pickle':
                 save_location = 'resources/save_data/svdta.pickle'
             if os.path.isfile(save_location):
                 while True:
-                    clear()
-                    s = get_input('WARNING: A save file with that name already exists\n'
-                                  'Saving will overwrite the last save game\n'
-                                  'Would you still like to save the game?\n1: Yes\n2: No')
+                    helpers.clear()
+                    s = helpers.get_input('WARNING: A save file with that name already exists\n'
+                                          'Saving will overwrite the last save game\n'
+                                          'Would you still like to save the game?\n1: Yes\n2: No')
                     if s == '1':
                         save()
                         break
@@ -214,128 +186,26 @@ def pause_menu():
             menu = True
             game = False
             break
-    clear()
+    helpers.clear()
     n = False
     grid()
     return
 
 
-def settings_menu():
-    global grid_size, controls, difficulty
-    while True:
-        clear()
-        print('Settings\n\nType the number of an option.\n\n1: Change grid length\n2: Change grid height'
-              '\n3: Change Controls\n4: Change Difficulty')
-        if op_sys == 'Windows':
-            print('5: Change Color\n6: Back')
-        if op_sys != 'Windows':
-            print('5: Back')
-        option = get_input()
-        clear()
-        if option == '1':
-            print('Enter a new length\nCurrent length {length}'.format(length=grid_size.x))
-            try:
-                x_new = int(input())
-            except ValueError:
-                input('ERROR: Length must be an integer.'
-                      '\nRestoring from config file.\nPress ENTER to continue.')
-                x_new = grid_size.x
-            if x_new < 10:
-                if x_new > 4:
-                    input('WARNING: This grid size might not be playable')
-                if x_new < 5:
-                    input('Entered value is to small. Length set to 10')
-                    x_new = 10
-            grid_size.x = x_new
-        if option == '2':
-            grid_size.y -= 2
-            print('Enter a new height\nCurrent height {height}'.format(height=grid_size.y))
-            try:
-                y_new = int(input())
-            except ValueError:
-                input('ERROR: Height must be an integer.'
-                      '\nRestoring from config file.\nPress ENTER to continue.')
-                y_new = grid_size.y
-            if y_new < 8:
-                if y_new > 4:
-                    input('WARNING: This grid size might not be playable')
-                if y_new < 5:
-                    input('Entered value is to small. Height set to 8')
-                    y_new = 8
-            grid_size.y = y_new + 2
-        if option == '3':
-            print('Current controls')
-            for control in controls:
-                print('{control}: {key}'.format(control=control, key=controls[control]))
-            print('Input new controls')
-            for control in controls:
-                controls[control] = input('{control}: '.format(control=control))
-        if option == '4':
-            print('Please enter a number between 1 (easy) and 10 (hard).'
-                  '\nCurrent Difficulty: {difficulty}'.format(difficulty=difficulty * 100))
-            try:
-                new_difficulty = float(input()) / 100
-                if new_difficulty < .01:
-                    input('ERROR: Number must be greater than 1')
-                    new_difficulty = difficulty
-                if new_difficulty > .1:
-                    input('ERROR: Number must be less than 10')
-                    new_difficulty = difficulty
-            except ValueError:
-                input('ERROR: Difficulty must be a number between 1 and 10')
-                new_difficulty = difficulty
-            difficulty = new_difficulty
-        if option == '5' and op_sys == 'Windows':
-            print('Pick a new color\nColors'
-                  '\n0 = Black       8 = Gray\n1 = Blue        9 = Light Blue'
-                  '\n2 = Green       A = Light Green\n3 = Aqua        B = Light Aqua'
-                  '\n4 = Red         C = Light Red\n5 = Purple      D = Light Purple'
-                  '\n6 = Yellow      E = Light Yellow\n7 = White       F = Bright White'
-                  '\nEntering anything other than one of the colors listed will set colors to default')
-            color_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-                          'a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']
-            background = input('Background Color: ')
-            if background not in color_list:
-                background = color.x
-            foreground = input('Text Color: ')
-            if foreground not in color_list:
-                foreground = color.y
-            if background == foreground:
-                input('ERROR: Background and text color cannot be the same.'
-                      '\nRestoring from config file.\nPress ENTER to continue.')
-                background = color.x
-                foreground = color.y
-            color.x = background
-            color.y = foreground
-            os.system('color {x}{y}'.format(x=color.x, y=color.y))
-        elif option == '4' and op_sys != 'Windows':
-            break
-        if option == '6' and op_sys == 'Windows':
-            break
-    with open('resources/data/config.pickle', 'wb') as config_file:
-        pickle.dump([grid_size, color, controls, difficulty], config_file)
-    return
-
-
+if helpers.get_os() == 'Windows':
+    os.system('title Escape')
+grid_size, _, controls, difficulty = config.load_config_file()
 # --master loop--
-try:
-    with open('resources/data/config.pickle', 'rb') as config_file:
-        grid_size, color, controls, difficulty = pickle.load(config_file)
-except FileNotFoundError:
-    config.setup('resources/data/config.pickle')
-    with open('resources/data/config.pickle', 'rb') as config_file:
-        grid_size, color, controls, difficulty = pickle.load(config_file)
-os.system('color {x}{y}'.format(x=color.x, y=color.y))
 master = True
 menu = True
 game = False
 while master is True:
     # --menu loop--
     while menu is True:
-        clear()
-        option = get_input('Type the number of an option.\n\n1: New Game\n2: Load Game'
-                           '\n3: Highscore\n4: Instructions\n5: Settings\n6: Quit')
-        clear()
+        helpers.clear()
+        option = helpers.get_input('Type the number of an option.\n\n1: New Game\n2: Load Game'
+                                   '\n3: Highscore\n4: Instructions\n5: Settings\n6: Quit')
+        helpers.clear()
         if option == '1':
             menu = False
             game = True
@@ -344,14 +214,14 @@ while master is True:
             score = 0
             new_round()
         if option == '2':
-            print('Type in the name of the save file.\nPress ENTER to use the defualt save file')
+            print('Type in the name of the save file.\nPress ENTER to use the default save file')
             save_location = 'resources/save_data/{name}.pickle'.format(name=input())
             if save_location == 'resources/save_data/.pickle':
                 save_location = 'resources/save_data/svdta.pickle'
             try:
                 with open(save_location, 'rb') as svdta:
                     grid_size, score, life_count, life_orb, life_orb_active, player, guards, \
-                    door, difficulty = pickle.load(svdta)
+                        door, difficulty = pickle.load(svdta)
                 menu = False
                 game = True
                 save_active = True
@@ -369,11 +239,12 @@ while master is True:
                   '(*) will give you +1 life.\n'
                   'Use the \'{up}\',\'{left}\',\'{down}\',\'{right}\' keys to move your character.\n'
                   'Use the \'{pause}\' key to open the pause menu.'.format(door='}', up=controls['up'],
-                                                                           left=controls['left'], down=controls['down'],
+                                                                           left=controls['left'],
+                                                                           down=controls['down'],
                                                                            right=controls['right'],
                                                                            pause=controls['pause']))
         if option == '5':
-            settings_menu()
+            grid_size, controls, difficulty = config.settings_menu()
         if option == '6':
             master = False
             menu = False

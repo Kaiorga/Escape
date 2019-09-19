@@ -185,3 +185,13 @@ v 5.5.0
 
 v 5.5.1
 - Fixed bug where trying to update highscores would cause the game to crash
+
+V 6.0.0 - Configuration Update
+- Moved settings menu from 'escape.py' to 'config.py'
+- Each settings menu option is now its own function
+- Added 'load_config_file' and 'write_config_file' functions
+- Added 'helpers.py'
+    - This file contains helper functions like 'clear' and 'get_input'
+    - Handles os calls that vary between operation systems
+        - ex: 'cls' vs 'clear'
+- Updated small grid size warnings
