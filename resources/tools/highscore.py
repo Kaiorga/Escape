@@ -1,37 +1,29 @@
 # This tool is used to generate and update highscores.
 
-import pickle
+import sqlite3
 
-
-def setup(location):
-    highscores = []
-    player_names = []
-    with open(location, 'wb') as f:
-        pickle.dump([highscores, player_names], f)
-    return
+import resources.tools.helpers as helpers
 
 
 def display(grid_size, difficulty):
-    try:
-        with open('resources/data/highscore-x{x}y{y}d{difficulty}.pickle'.format(x=grid_size.x, y=grid_size.y - 2,
-                                                                                 difficulty=difficulty), 'rb') as f:
-            highscores, player_names = pickle.load(f)
-    except FileNotFoundError:
-        setup('resources/data/highscore-x{x}y{y}d{difficulty}.pickle'.format(x=grid_size.x, y=grid_size.y - 2,
-                                                                             difficulty=difficulty))
-        with open('resources/data/highscore-x{x}y{y}d{difficulty}.pickle'.format(x=grid_size.x, y=grid_size.y - 2,
-                                                                                 difficulty=difficulty), 'rb') as f:
-            highscores, player_names = pickle.load(f)
-    print(
-        'Highscores for grid size {x},{y}\nDifficulty setting: {difficulty}\n'.format(x=grid_size.x, y=grid_size.y - 2,
-                                                                                      difficulty=difficulty * 100))
-    if len(highscores) == 0:
+    database = sqlite3.connect('resources/data/escape.db')
+    cursor = database.cursor()
+    cursor.execute('''select h.name, h.score from highscores h 
+                    where h."length" = {length} and h.width = {width} and h.difficulty = {difficulty} 
+                    order by h.score desc;'''
+                   .format(length=grid_size.x, width=grid_size.y, difficulty=difficulty))
+    result_set = cursor.fetchall()
+    database.close()
+    print('Highscores for {x}x{y} grid and difficulty setting {difficulty}\n'
+          .format(x=grid_size.x, y=grid_size.y - 2, difficulty=difficulty * 100))
+    if len(result_set) == 0:
         print('No scores to show')
     else:
-        index = 0
+        index = 1
         print('Rank\tScore\tName')
-        while index < len(highscores):
-            print('{rank}:\t{score}\t{name}'.format(rank=index + 1, score=highscores[index], name=player_names[index]))
+        for result in result_set:
+            player_name, score = result
+            print('{rank}:\t{score}\t{name}'.format(rank=index, score=score, name=player_name))
             index += 1
     input()
     return
@@ -39,30 +31,18 @@ def display(grid_size, difficulty):
 
 def update(score, player, grid_size, difficulty):
     try:
-        with open('resources/data/highscore-x{x}y{y}d{difficulty}.pickle'.format(x=grid_size.x, y=grid_size.y - 2,
-                                                                                 difficulty=difficulty), 'rb') as f:
-            highscores, player_names = pickle.load(f)
-    except FileNotFoundError:
-        setup('resources/data/highscore-x{x}y{y}d{difficulty}.pickle'.format(x=grid_size.x, y=grid_size.y - 2,
-                                                                             difficulty=difficulty))
-        with open('resources/data/highscore-x{x}y{y}d{difficulty}.pickle'.format(x=grid_size.x, y=grid_size.y - 2,
-                                                                                 difficulty=difficulty), 'rb') as f:
-            highscores, player_names = pickle.load(f)
-    if len(highscores) == 0:
-        highscores.append(score)
-        player_names.append(player)
-    else:
-        index = 0
-        while index < len(highscores):
-            if score > highscores[index]:
-                highscores.insert(index, score)
-                player_names.insert(index, player)
-                break
-            index += 1
-        if index == len(highscores):
-            highscores.append(score)
-            player_names.append(player)
-    with open('resources/data/highscore-x{x}y{y}d{difficulty}.pickle'.format(x=grid_size.x, y=grid_size.y - 2,
-                                                                             difficulty=difficulty), 'wb') as f:
-        pickle.dump([highscores, player_names], f)
+        database = sqlite3.connect('resources/data/escape.db')
+        cursor = database.cursor()
+        cursor.execute('''insert into highscores(length, width, difficulty, name, score) 
+                        values(?, ?, ?, ?, ?)''', (grid_size.x, grid_size.y, difficulty, player, score))
+        database.commit()
+        database.close()
+        option = helpers.get_input('Press "H" to view highscores')
+        helpers.clear()
+        if option == 'H' or option == 'h':
+            display(grid_size, difficulty)
+    except sqlite3.OperationalError:
+        helpers.clear()
+        print('ERROR: Could not save highscore data to database')
+        input()
     return

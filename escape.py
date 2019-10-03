@@ -1,4 +1,4 @@
-# Version 6.0.2
+# Version 7.0.0
 # Escape by TyReesh Boedhram
 # NOTE: This game must be run in Command Prompt on Windows or Terminal on Linux to work properly.
 # This game will not work properly in IDLE.
@@ -6,230 +6,194 @@
 # Please report any bugs.
 
 import os
-import pickle
 import random
+
+from resources.classes.Game import Game as Game
+from resources.classes.GameElement import GameElement as GameElement
+
 import resources.tools.config as config
-from resources.tools.config import GameObject
-import resources.tools.highscore as highscore
 import resources.tools.helpers as helpers
+import resources.tools.highscore as highscore
+import resources.tools.save as save
 
 
-def grid():
-    global life_orb_active, guards
+def grid(game):
     helpers.clear()
-    matrix = [[' ' for _ in range(grid_size.x)] for _ in range(grid_size.y)]
+    matrix = [[' ' for _ in range(game.grid_size.x)] for _ in range(game.grid_size.y)]
     #   --top and bottom border--
     column = 0
-    while column < grid_size.x:
+    while column < game.grid_size.x:
         matrix[0][column] = '-'
-        matrix[grid_size.y - 1][column] = '-'
+        matrix[game.grid_size.y - 1][column] = '-'
         column += 1
     #   --game objects--
-    matrix[door][grid_size.x - 1] = '}'
-    matrix[player.y][player.x] = 'i'
-    for guard in guards:
+    matrix[game.door][game.grid_size.x - 1] = '}'
+    matrix[game.player.y][game.player.x] = 'i'
+    for guard in game.guards:
         matrix[guard.y][guard.x] = '#'
-    if life_orb_active:
-        matrix[life_orb.y][life_orb.x] = '*'
-    else:
-        matrix[life_orb.y][life_orb.x] = '-'
+    if game.life_orb_active:
+        matrix[game.life_orb.y][game.life_orb.x] = '*'
     #   --removes extra characters--
     for row in matrix:
         row_string = str(row)
         row_string = row_string.replace('[', '|').replace(']', '|').replace(',', '').replace('\'', '')
         print(row_string)
-    print('Score: {score}\tLives: {lives}'.format(score=score, lives=life_count))
-    return
+    print('Score: {score}\tLives: {lives}'.format(score=game.score, lives=game.lives))
+    return game
 
 
 # --Player Commands--
-def player_input():
-    global player
+def player_input(game, controls):
     y = helpers.get_input()
-    if y == controls['up'] and player.y > 1:
-        player.y -= 1
-    if y == controls['left'] and player.x > 0:
-        player.x -= 1
-    if y == controls['down'] and player.y < grid_size.y - 2:
-        player.y += 1
-    if y == controls['right'] and player.x < grid_size.x - 1:
-        player.x += 1
-        if player.y != door and player.x == grid_size.x - 1:
-            player.x -= 1
+    if y == controls['up'] and game.player.y > 1:
+        game.player.y -= 1
+    if y == controls['left'] and game.player.x > 0:
+        game.player.x -= 1
+    if y == controls['down'] and game.player.y < game.grid_size.y - 2:
+        game.player.y += 1
+    if y == controls['right'] and game.player.x < game.grid_size.x - 1:
+        game.player.x += 1
+        if game.player.y != game.door and game.player.x == game.grid_size.x - 1:
+            game.player.x -= 1
     if y == controls['pause']:
-        pause_menu()
-    return
+        pause_menu(game)
+    return game
 
 
 # --Guard Movement AI--
-def ai():
-    global guards
-    for guard in guards:
+def ai(game):
+    for guard in game.guards:
         direction = random.randint(1, 4)
         if direction == 1 and guard.y > 1:
             guard.y -= 1
-        if direction == 2 and guard.x < grid_size.x - 2:
+        if direction == 2 and guard.x < game.grid_size.x - 2:
             guard.x += 1
-        if direction == 3 and guard.y < grid_size.y - 2:
+        if direction == 3 and guard.y < game.grid_size.y - 2:
             guard.y += 1
         if direction == 4 and guard.x > 0:
             guard.x -= 1
+    return game
 
 
-def new_round():
-    global door, player, guards, life_orb, life_orb_active
-    door = random.randint(1, grid_size.y - 2)
-    player = GameObject(0, random.randint(1, grid_size.y - 2))
-    number_of_guards = round((grid_size.x * (grid_size.y - 2)) * difficulty)
-    guards = []
+def new_round(game):
+    game.door = random.randint(1, game.grid_size.y - 2)
+    game.player = GameElement(0, random.randint(1, game.grid_size.y - 2))
+    number_of_guards = round((game.grid_size.x * (game.grid_size.y - 2)) * game.difficulty)
     index = 1
     while index <= number_of_guards:
-        new_guard = GameObject(random.randint(2, grid_size.x - 2), random.randint(1, grid_size.y - 2))
-        guards.append(new_guard)
+        new_guard = GameElement(random.randint(2, game.grid_size.x - 2), random.randint(1, game.grid_size.y - 2))
+        game.guards.append(new_guard)
         index += 1
     if random.randint(1, 5) == 3:
-        life_orb_active = True
-        life_orb = GameObject(random.randint(round(grid_size.x / 2), grid_size.x - 2),
-                              random.randint(1, grid_size.y - 2))
+        game.life_orb_active = True
+        game.life_orb = GameElement(random.randint(round(game.grid_size.x / 2), game.grid_size.x - 2),
+                                    random.randint(1, game.grid_size.y - 2))
     else:
-        life_orb_active = False
-        life_orb = GameObject(grid_size.x - 1, grid_size.y - 1)
-    grid()
-    return
+        game.life_orb = GameElement(game.grid_size.x-1, game.grid_size.y-1)
+        game.life_orb_active = False
+    game = grid(game)
+    return game
 
 
-def life():
-    global life_count
-    life_count += 1
-    if life_count > 10:
-        life_count = 10
-    return
+def life(game):
+    if game.lives <= 10:
+        game.lives += 1
+    return game
 
 
-def life_2():
-    global life_orb, life_orb_active
-    life_orb.y = grid_size.y - 1
-    life_orb.x = grid_size.x - 1
-    life_orb_active = False
-    grid()
-    return
+def life_2(game):
+    game.life_orb.y = game.grid_size.y - 1
+    game.life_orb.x = game.grid_size.x - 1
+    game.life_orb_active = False
+    game = grid(game)
+    return game
 
 
-def end_round():
-    global life_count
-    life_count -= 1
-    if life_count == 0:
-        end_game()
+def end_round(game):
+    game.lives -= 1
+    if game.lives == 0:
+        end_game(game)
     else:
-        new_round()
-    return
+        new_round(game)
+    return game
 
 
-def end_game():
-    global game, menu, save_active, save_location
-    if save_active:
-        os.remove(save_location)
+def end_game(game):
+    game.game_over = True
+    if game.id is not None:
+        save.delete_save(game.id)
     helpers.clear()
-    player_name = input('Game Over\nScore: {score}\nEnter a name to go with your score: '.format(score=score))
+    player_name = input('Game Over\nScore: {score}\nEnter a name to go with your score: '.format(score=game.score))
     if player_name == '':
         player_name = '(no name)'
-    highscore.update(score, player_name, grid_size, difficulty)
-    a = helpers.get_input('Press "H" to view highscores')
-    helpers.clear()
-    if a == 'H' or a == 'h':
-        highscore.display(grid_size, difficulty)
-    game = False
-    menu = True
-    return
+    highscore.update(game.score, player_name, game.grid_size, game.difficulty)
+    return game
 
 
-def save():
-    global save_location, save_active
-    try:
-        with open(save_location, 'wb') as f:
-            pickle.dump([grid_size, score, life_count, life_orb, life_orb_active, player,
-                         guards, door, difficulty], f)
-        helpers.clear()
-        input('Save Complete')
-        save_active = True
-    except OSError:
-        input('Error: Save Failed\nInvalid file name entered')
-
-
-def pause_menu():
-    global game, menu, save_location, n
+def pause_menu(game):
     while True:
         helpers.clear()
         option = helpers.get_input('Type the number of an option.\n\n1: Return to Game\n2: Save\n3: Main Menu')
         if option == '1':
             break
         if option == '2':
-            helpers.clear()
-            print('Name this save file\nPress ENTER to use default name')
-            save_location = 'resources/save_data/{name}.pickle'.format(name=input())
-            if save_location == 'resources/save_data/.pickle':
-                save_location = 'resources/save_data/svdta.pickle'
-            if os.path.isfile(save_location):
-                while True:
-                    helpers.clear()
-                    s = helpers.get_input('WARNING: A save file with that name already exists\n'
-                                          'Saving will overwrite the last save game\n'
-                                          'Would you still like to save the game?\n1: Yes\n2: No')
-                    if s == '1':
-                        save()
-                        break
-                    if s == '2':
-                        break
-            else:
-                save()
+            save.save_game(game)
         if option == '3':
-            menu = True
-            game = False
+            game.game_over = True
             break
     helpers.clear()
-    n = False
-    grid()
-    return
+    game.was_paused = True
+    game = grid(game)
+    return game
 
 
-if helpers.get_os() == 'Windows':
-    os.system('title Escape')
-grid_size, _, controls, difficulty = config.load_config_file()
-# --master loop--
-master = True
-menu = True
-game = False
-while master is True:
+def game_loop(game, controls):
+    while True:
+        game.was_paused = False
+        game = player_input(game, controls)
+        if not game.was_paused:
+            game = ai(game)
+            game = grid(game)
+            if game.player.y == game.door and game.player.x == game.grid_size.x - 1:
+                game.score += 1
+                game = new_round(game)
+            if game.life_orb_active and game.player.y == game.life_orb.y and game.player.x == game.life_orb.x:
+                game = life(game)
+                game = life_2(game)
+            for guard in game.guards:
+                if game.life_orb_active and game.life_orb.y == guard.y and game.life_orb.x == guard.x:
+                    game = life_2(game)
+                if game.player.y == guard.y and game.player.x == guard.x:
+                    game = end_round(game)
+                elif game.player.y == guard.y and game.player.x == guard.x - 1:
+                    game = end_round(game)
+                elif game.player.y == guard.y and game.player.x == guard.x + 1:
+                    game = end_round(game)
+                elif game.player.y == guard.y - 1 and game.player.x == guard.x:
+                    game = end_round(game)
+                elif game.player.y == guard.y + 1 and game.player.x == guard.x:
+                    game = end_round(game)
+        if game.game_over:
+            break
+
+
+def main():
+    grid_size, _, controls, difficulty = config.load_config_file()
     # --menu loop--
-    while menu is True:
+    while True:
         helpers.clear()
         option = helpers.get_input('Type the number of an option.\n\n1: New Game\n2: Load Game'
                                    '\n3: Highscore\n4: Instructions\n5: Settings\n6: Quit')
         helpers.clear()
         if option == '1':
-            menu = False
-            game = True
-            save_active = False
-            life_count = 1
-            score = 0
-            new_round()
+            game = Game(grid_size, difficulty, 0, 1)
+            game = new_round(game)
+            game_loop(game, controls)
         if option == '2':
-            print('Type in the name of the save file.\nPress ENTER to use the default save file')
-            save_location = 'resources/save_data/{name}.pickle'.format(name=input())
-            if save_location == 'resources/save_data/.pickle':
-                save_location = 'resources/save_data/svdta.pickle'
-            try:
-                with open(save_location, 'rb') as svdta:
-                    grid_size, score, life_count, life_orb, life_orb_active, player, guards, \
-                        door, difficulty = pickle.load(svdta)
-                menu = False
-                game = True
-                save_active = True
-                grid()
-            except FileNotFoundError:
-                input('No save file found')
-            except OSError:
-                input('Error: Load Failed\nInvalid file name entered')
+            game = save.load_game()
+            if game is not None:
+                game = grid(game)
+                game_loop(game, controls)
         if option == '3':
             highscore.display(grid_size, difficulty)
         if option == '4':
@@ -246,33 +210,12 @@ while master is True:
         if option == '5':
             grid_size, controls, difficulty = config.settings_menu()
         if option == '6':
-            master = False
-            menu = False
-            game = False
+            break
 
-    # --game loop--
-    while game is True:
-        n = True
-        player_input()
-        if n is True:
-            ai()
-            grid()
-        if player.y == door and player.x == grid_size.x - 1:
-            score += 1
-            new_round()
-        if player.y == life_orb.y and player.x == life_orb.x:
-            life()
-            life_2()
-        for guard in guards:
-            if life_orb.y == guard.y and life_orb.x == guard.x:
-                life_2()
-            if player.y == guard.y and player.x == guard.x:
-                end_round()
-            if player.y == guard.y and player.x == guard.x - 1:
-                end_round()
-            if player.y == guard.y and player.x == guard.x + 1:
-                end_round()
-            if player.y == guard.y - 1 and player.x == guard.x:
-                end_round()
-            if player.y == guard.y + 1 and player.x == guard.x:
-                end_round()
+
+if __name__ == '__main__':
+    if helpers.get_os() == 'Windows':
+        os.system('title Escape')
+    if not os.path.exists('resources/data/escape.db'):
+        config.database_setup()
+    main()

@@ -201,3 +201,15 @@ v 6.0.1
 
 v 6.0.2
 - Removed commented out code used for debugging
+
+v 7.0.0 - Database Update
+- Save data and Highscore data are now saved in a SQLite database
+- There is now a 'Game' class that contains all of the game variables
+- 'Game_Object' class renamed to 'Game_Element'
+- Classes have been broken out into their own python files
+- All save functions are located in 'resources/tools/save.py'
+- Removed all global variables
+- Split up main menu loop and game loop
+    - Main menu is now in 'main' function
+    - Game loop in now in 'game_loop' function
+    - Removed master loop

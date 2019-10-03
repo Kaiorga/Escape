@@ -2,15 +2,11 @@
 
 import os
 import pickle
+import sqlite3
+
+from resources.classes.GameElement import GameElement as GameElement
+
 import resources.tools.helpers as helpers
-
-
-class GameObject:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        # color uses the Game_Object class
-        # background color = x and foreground color = y
 
 
 def load_config_file():
@@ -35,10 +31,20 @@ def write_config_file(grid_size, color, controls, difficulty):
     return
 
 
+def database_setup():
+    db = sqlite3.connect('resources/data/escape.db')
+    c = db.cursor()
+    c.execute('''create table save_data(id INTEGER PRIMARY KEY, name TEXT, length INTEGER, width INTEGER, difficulty REAL, score INTEGER, lives INTEGER, life_orb_active TEXT)''')
+    c.execute('''create table game_elements(id INTEGER PRIMARY KEY, save_id INTEGER FOREGIN KEY, name TEXT, x_coordinate INTEGER, y_coordinate INTEGER)''')
+    c.execute('''create table highscores(id INTEGER PRIMARY KEY, length INTEGER, width INTEGER, difficulty REAL, name TEXT, score INTEGER)''')
+    db.commit()
+    db.close()
+
+
 def setup():
     print('Could not find config file\nGenerating new config file ...')
-    grid_size = GameObject(16, 10)
-    color = GameObject('0', '7')
+    grid_size = GameElement(16, 10)
+    color = GameElement('0', '7')
     controls = {'up': 'w', 'left': 'a', 'down': 's', 'right': 'd', 'pause': 'e'}
     difficulty = 0.03125
     write_config_file(grid_size, color, controls, difficulty)
